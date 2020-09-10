@@ -55,11 +55,11 @@ int lab1::string::index(char c) const {
 
 void lab1::string::upcase(unsigned first, unsigned last) {
 		if (first >= last) {
-				throw std::exception();
+				throw std::runtime_error("Out of range");
 		}
 
 		if (last > m_length) {
-				throw std::exception();
+        std::runtime_error("Out of range");
 		}
 
 		for (unsigned j = first; j < last; j++)
@@ -79,6 +79,22 @@ void lab1::string::downcase(unsigned first, unsigned last) {
 		for (unsigned j = first; j < last; j++)
 				if ('A' <= m_string[j] && m_string[j] <= 'Z')
 						m_string[j] += ('a' - 'A');
+}
+
+void lab1::string::togglecase(unsigned first, unsigned last) {
+		if (first >= last) {
+				throw std::exception();
+		}
+
+		if (last > m_length) {
+				throw std::exception();
+		}
+
+		for (unsigned j = first; j < last; j++)
+				if ('A' <= m_string[j] && m_string[j] <= 'Z')
+						m_string[j] += ('a' - 'A');
+				else if ('a' <= m_string[j] && m_string[j] <= 'z')
+						m_string[j] -= ('a' - 'A');
 }
 
 std::ostream& lab1::operator<<(std::ostream& os, const string& s) {
@@ -101,12 +117,12 @@ std::istream& lab1::operator>>(std::istream& is, string& s) {
 }
 
 char lab1::string::operator[](unsigned j) const {
-		if (j >= m_length) throw std::exception();
+		if (j >= m_length) throw std::runtime_error("Out of range");
 		return m_string[j];
 }
 
 char& lab1::string::operator[](unsigned j) {
-		if (j >= m_length) throw std::exception();
+		if (j >= m_length) throw std::runtime_error("Out of range");
 		return m_string[j];
 }
 

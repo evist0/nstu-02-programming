@@ -1,7 +1,9 @@
 #ifndef COMMON_STRING_HPP
 #define COMMON_STRING_HPP
 
-#include <iostream>
+#include <iosfwd>
+#include <string>
+#include <sstream>
 
 namespace lab1 {
 		class string {
@@ -21,8 +23,8 @@ namespace lab1 {
 						void downcase(unsigned first, unsigned last);
 						void togglecase(unsigned first, unsigned last);
 
-						friend std::ostream& operator<<(std::ostream& so, const string& s);
-						friend std::istream& operator>>(std::istream& so, string& s);
+						friend std::ostream& operator<<(std::ostream& os, const string& s);
+						friend std::istream& operator>>(std::istream& is, string& s);
 
 						char operator[](unsigned j) const;
 						char& operator[](unsigned j);

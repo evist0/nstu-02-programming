@@ -1,16 +1,19 @@
 cmake_minimum_required(VERSION 3.16)
+project(oop-labs)
 
-project(main)
-add_executable(main main.cpp)
-target_include_directories(main PUBLIC include)
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+    file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.15/conan.cmake"
+            "${CMAKE_BINARY_DIR}/conan.cmake"
+            TLS_VERIFY ON)
+endif()
 
-project(utils)
-add_library(utils include/utils/String.h src/utils/String.cpp)
-target_include_directories(utils PUBLIC include/utils)
-target_include_directories(utils PRIVATE src/utils)
+include(${CMAKE_BINARY_DIR}/conan.cmake)
 
-project(lab1)
-add_library(lab1 include/lab1/atm.h src/lab1/atm.cpp)
-target_include_directories(lab1 PUBLIC include)
+conan_cmake_run(REQUIRES catch2/2.13.0
+        BASIC_SETUP
+        BUILD missing
+        CMAKE_TARGETS)
 
-target_link_libraries(main utils lab1)
+add_subdirectory(common)
+add_subdirectory(lab1)

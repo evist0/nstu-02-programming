@@ -1,18 +1,16 @@
 #include <String.h>
 
-using namespace Utils;
-
-String::String() {
+Utils::String::String() {
 		_length = 0;
 		_string = new char[0];
 }
 
-String::String(char c) {
+Utils::String::String(char c) {
 		_length = 0;
 		_string = new char(c);
 }
 
-String::String(const char* c) {
+Utils::String::String(const char* c) {
 		if (c) {
 				unsigned n = 0;
 				while (c[n] != '\0') n++;
@@ -27,42 +25,41 @@ String::String(const char* c) {
 		}
 }
 
-String::String(const String& s) {
+Utils::String::String(const String& s) {
 		_length = s.len();
 		_string = new char[_length];
 		for (unsigned j = 0; j < _length; j++)
 				_string[j] = s[j];
 }
 
-String::String(const std::string& s) {
+Utils::String::String(const std::string& s) {
 		_length = s.length();
 		_string = new char[_length];
 		for (unsigned j = 0; j < _length; j++)
 				_string[j] = s[j];
 }
 
-String::~String() {
+Utils::String::~String() {
 		delete[] _string;
 }
 
-unsigned String::len() const {
+unsigned Utils::String::len() const {
 		return _length;
 }
 
-int String::index (char c) const
-{
-		for (unsigned j=0; j < _length; j++)
+int Utils::String::index(char c) const {
+		for (unsigned j = 0; j < _length; j++)
 				if (_string[j] == c) return (int)j;
 		return -1;
 }
 
-void String::upcase(unsigned first, unsigned last) {
-		if(first >= last) {
-				throw std::exception("First is greater than or equal to last");
+void Utils::String::upcase(unsigned first, unsigned last) {
+		if (first >= last) {
+				throw std::exception();
 		}
 
 		if (last > _length) {
-				throw std::exception("Last is greater than length");
+				throw std::exception();
 		}
 
 		for (unsigned j = first; j < last; j++)
@@ -70,13 +67,13 @@ void String::upcase(unsigned first, unsigned last) {
 						_string[j] -= ('a' - 'A');
 }
 
-void String::downcase(unsigned first, unsigned last) {
-		if(first >= last) {
-				throw std::exception("First is greater than or equal to last");
+void Utils::String::downcase(unsigned first, unsigned last) {
+		if (first >= last) {
+				throw std::exception();
 		}
 
 		if (last > _length) {
-				throw std::exception("Last is greater than length");
+				throw std::exception();
 		}
 
 		for (unsigned j = first; j < last; j++)
@@ -84,13 +81,13 @@ void String::downcase(unsigned first, unsigned last) {
 						_string[j] += ('a' - 'A');
 }
 
-void String::togglecase(unsigned first, unsigned last) {
-		if(first >= last) {
-				throw std::exception("First is greater than or equal to last");
+void Utils::String::togglecase(unsigned first, unsigned last) {
+		if (first >= last) {
+				throw std::exception();
 		}
 
 		if (last > _length) {
-				throw std::exception("Last is greater than length");
+				throw std::exception();
 		}
 
 		for (unsigned j = first; j < last; j++)
@@ -100,7 +97,7 @@ void String::togglecase(unsigned first, unsigned last) {
 						_string[j] -= ('a' - 'A');
 }
 
-std::ostream& operator<<(std::ostream& os, const String& s) {
+std::ostream& Utils::operator<<(std::ostream& os, const Utils::String& s) {
 		if (s.len() > 0) {
 				for (unsigned j = 0; j < s.len(); j++)
 						os << s[j];
@@ -110,29 +107,29 @@ std::ostream& operator<<(std::ostream& os, const String& s) {
 		return os;
 }
 
-std::istream& operator>>(std::istream& is, String& s) {
+std::istream& Utils::operator>>(std::istream& is, Utils::String& s) {
 		char* c = new char[1000];
 		is >> c;
-		s = String(c);
+		s = Utils::String(c);
 		delete[] c;
 
 		return is;
 }
 
-char String::operator[](unsigned j) const {
-		if (j >= _length) throw std::exception("Out of range");
+char Utils::String::operator[](unsigned j) const {
+		if (j >= _length) throw std::exception();
 		return _string[j];
 }
 
-char& String::operator[](unsigned j) {
-		if (j >= _length) throw std::exception("Out of range");
+char& Utils::String::operator[](unsigned j) {
+		if (j >= _length) throw std::exception();
 		return _string[j];
 }
 
-String& String::operator=(const String& s) {
+Utils::String& Utils::String::operator=(const String& s) {
 		if (this == &s) return *this;
 
-		delete _string;
+		delete[] _string;
 		_length = s.len();
 		_string = new char[_length];
 		for (unsigned j = 0; j < _length; j++)
@@ -140,7 +137,7 @@ String& String::operator=(const String& s) {
 		return *this;
 }
 
-String& String::operator+=(const String& s) {
+Utils::String& Utils::String::operator+=(const String& s) {
 		unsigned len = _length + s.len();
 		char* str = new char[len];
 
@@ -150,28 +147,28 @@ String& String::operator+=(const String& s) {
 		for (unsigned i = 0; i < s.len(); i++)
 				str[_length + i] = s[i];
 
-		delete _string;
+		delete[] _string;
 		_length = len;
 		_string = str;
 		return *this;
 }
 
-String operator+(const String& lhs, const String& rhs) {
-		return String(lhs) += rhs;
+Utils::String Utils::operator+(const Utils::String& lhs, const Utils::String& rhs) {
+		return Utils::String(lhs) += Utils::String(rhs);
 }
 
-String operator+(const String& lhs, char rhs) {
-		return String(lhs) += String(rhs);
+Utils::String Utils::operator+(const Utils::String& lhs, char rhs) {
+		return Utils::String(lhs) += Utils::String(rhs);
 }
 
-String operator+(const String& lhs, const char* rhs) {
-		return String(lhs) += String(rhs);
+Utils::String Utils::operator+(const Utils::String& lhs, const char* rhs) {
+		return Utils::String(lhs) += Utils::String(rhs);
 }
 
-String operator+(char lhs, const String& rhs) {
-		return String(lhs) += rhs;
+Utils::String Utils::operator+(char lhs, const Utils::String& rhs) {
+		return Utils::String(lhs) += rhs;
 }
 
-String operator+(const char* lhs, const String& rhs) {
-		return String(lhs) += rhs;
+Utils::String Utils::operator+(const char* lhs, const Utils::String& rhs) {
+		return Utils::String(lhs) += rhs;
 }

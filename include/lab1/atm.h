@@ -10,7 +10,6 @@ class ATM {
 				float _maxWithdraw;
 
 		public:
-				//Constructors
 				explicit ATM(const Utils::String& id);
 				ATM(const Utils::String& id, float maxWithdraw);
 

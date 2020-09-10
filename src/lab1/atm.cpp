@@ -1,6 +1,5 @@
-#include <utils/String.h>
-#include <sstream>
 #include <lab1/atm.h>
+#include <sstream>
 
 ATM::ATM(const Utils::String& id) {
 		_id = id;
@@ -10,7 +9,7 @@ ATM::ATM(const Utils::String& id) {
 
 ATM::ATM(const Utils::String& id, float maxWithdraw) {
 		if (maxWithdraw < 0) {
-				throw std::exception("Max withdraw can not be less than 0");
+				throw std::exception();
 		}
 
 		_id = id;
@@ -20,7 +19,7 @@ ATM::ATM(const Utils::String& id, float maxWithdraw) {
 
 void ATM::DepositMoney(float amount) {
 		if (amount < 0) {
-				throw std::exception("You can not upload negative amount of money");
+				throw std::exception();
 		}
 
 		_balance += amount;
@@ -28,11 +27,11 @@ void ATM::DepositMoney(float amount) {
 
 void ATM::WithdrawMoney(float amount) {
 		if (amount < 0) {
-				throw std::exception("You can not withdraw negative amount of money");
+				throw std::exception();
 		}
 
 		if (_balance - amount < 0) {
-				throw std::exception("Not enough money in the ATM, try a different amount");
+				throw std::exception();
 		}
 
 		_balance -= amount;

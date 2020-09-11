@@ -17,3 +17,4 @@ conan_cmake_run(REQUIRES catch2/2.13.0
 
 add_subdirectory(common)
 add_subdirectory(lab1)
+add_subdirectory(lab2)

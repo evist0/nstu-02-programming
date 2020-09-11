@@ -5,26 +5,29 @@
 #include <common/string.hpp>
 
 namespace lab1 {
-		class ATM {
-				public:
-						ATM(const lab1::string& id, float maxWithdraw = 0.f, float initialBalance = 0.f);
+    class ATM {
+        public:
+            ATM(const lab1::string& id, float maxWithdraw = 0.f, float initialBalance = 0.f);
 
-						void deposit(float amount);
-						void withdraw(float amount);
+            void deposit(float amount);
+            void withdraw(float amount);
 
-						const char* id() const noexcept;
-						float balance() const noexcept;
-						float maxWithdraw() const noexcept;
+            const char* id() const noexcept;
+            float balance() const noexcept;
+            float maxWithdraw() const noexcept;
 
-						friend std::ostream& operator<<(std::ostream& ostream, const ATM& atm);
+            /*friend std::ostream& operator<<(std::ostream& ostream, const ATM& atm);*/
 
-				private:
-						lab1::string m_id;
-						float m_balance;
-						float m_maxWithdraw;
-		};
+        protected:
+            std::basic_string<char, std::char_traits<char>, std::allocator<char>> to_string();
 
-		std::ostream& operator<<(std::ostream& ostream, const ATM& atm);
+        private:
+            lab1::string m_id;
+            float m_balance;
+            float m_maxWithdraw;
+    };
+
+    /*std::ostream& operator<<(std::ostream& ostream, const ATM& atm);*/
 }
 
 #endif //LAB1_ATM_HPP

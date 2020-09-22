@@ -1,7 +1,7 @@
 #include <lab1/atm.hpp>
-#include <sstream>
+#include <cstdlib>
 
-lab1::ATM::ATM(const lab1::string& id, float maxWithdraw, float initialBalance)
+lab1::ATM::ATM(const common::string& id, float maxWithdraw, float initialBalance)
         :m_id(id), m_balance(initialBalance), m_maxWithdraw(maxWithdraw) {
     if (m_maxWithdraw < 0) {
         throw std::runtime_error("Max withdraw less than 0");
@@ -47,22 +47,14 @@ void lab1::ATM::withdraw(float amount) {
     m_balance -= amount;
 }
 
-std::basic_string<char, std::char_traits<char>, std::allocator<char>> lab1::ATM::to_string() {
-    std::stringstream ss;
+common::string lab1::ATM::to_string() {
+    char balance_string[64], maxWithdraw_string[64];
 
-    ss << "ATM Id: " << m_id << '\n' << "Balance: " << m_balance << "\n" << "Max withdraw: "
-            << m_maxWithdraw << "\n";
+    gcvt(m_balance, 64, balance_string);
+    gcvt(m_maxWithdraw, 64, maxWithdraw_string);
 
-    return ss.str();
+    common::string result = "ATM Id: " + m_id + '\n' + "Balance: " + balance_string + "\n" + "Max withdraw: "
+            + maxWithdraw_string + "\n";
+
+    return result;
 }
-
-/*std::ostream& lab1::operator<<(std::ostream& ostream, const lab1::ATM& atm) {
-    std::ostream::sentry sentry(ostream);
-
-    if (sentry) {
-        ostream << "ATM Id: " << atm.m_id << '\n' << "Balance: " << atm.m_balance << "\n" << "Max withdraw: "
-                << atm.m_maxWithdraw << "\n";
-    }
-
-    return ostream;
-}*/

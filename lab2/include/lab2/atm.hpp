@@ -1,13 +1,12 @@
 #ifndef OOP_LABS_ATM_H
 #define OOP_LABS_ATM_H
 
-#include <sstream>
 #include <lab1/atm.hpp>
 
 namespace lab2 {
     class ATM : public lab1::ATM {
         public:
-            ATM(const lab1::string& id, float maxWithdraw = 0.f, float initialBalance = 0.f)
+            ATM(const common::string& id, float maxWithdraw = 0.f, float initialBalance = 0.f)
                     :lab1::ATM(id, maxWithdraw, initialBalance) {
             };
 
@@ -19,7 +18,7 @@ namespace lab2 {
 
             friend bool operator!=(ATM& atm, float checkSum);
 
-            std::basic_string<char, std::char_traits<char>, std::allocator<char>> operator()();
+            common::string operator()();
     };
 
     ATM operator-(ATM& atm, float withdrawSum);

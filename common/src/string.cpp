@@ -1,16 +1,16 @@
 #include <common/string.hpp>
 
-lab1::string::string() {
+common::string::string() {
 		m_length = 0;
 		m_string = new char[1] { '\0'};
 }
 
-lab1::string::string(char c) {
+common::string::string(char c) {
 		m_length = 1;
 		m_string = new char[2] { c, '\0'};
 }
 
-lab1::string::string(const char* c) {
+common::string::string(const char* c) {
 		if (c) {
 				unsigned n = 0;
 				while (c[n] != '\0') n++;
@@ -25,41 +25,41 @@ lab1::string::string(const char* c) {
 		}
 }
 
-lab1::string::string(const string& s) {
+common::string::string(const string& s) {
 		m_length = s.len();
 		m_string = new char[m_length];
 		for (unsigned j = 0; j < m_length; j++)
 				m_string[j] = s[j];
 }
 
-lab1::string::string(const std::string& s) {
+common::string::string(const std::string& s) {
 		m_length = s.length();
 		m_string = new char[m_length];
 		for (unsigned j = 0; j < m_length; j++)
 				m_string[j] = s[j];
 }
 
-lab1::string::~string() {
+common::string::~string() {
 		delete[] m_string;
 }
 
-unsigned lab1::string::len() const {
+unsigned common::string::len() const {
 		return m_length;
 }
 
-int lab1::string::index(char c) const {
+int common::string::index(char c) const {
 		for (unsigned j = 0; j < m_length; j++)
 				if (m_string[j] == c) return (int)j;
 		return -1;
 }
 
-void lab1::string::upcase(unsigned first, unsigned last) {
+void common::string::upcase(unsigned first, unsigned last) {
 		if (first >= last) {
 				throw std::runtime_error("Out of range");
 		}
 
 		if (last > m_length) {
-        std::runtime_error("Out of range");
+        throw std::runtime_error("Out of range");
 		}
 
 		for (unsigned j = first; j < last; j++)
@@ -67,7 +67,7 @@ void lab1::string::upcase(unsigned first, unsigned last) {
 						m_string[j] -= ('a' - 'A');
 }
 
-void lab1::string::downcase(unsigned first, unsigned last) {
+void common::string::downcase(unsigned first, unsigned last) {
 		if (first >= last) {
 				throw std::exception();
 		}
@@ -81,7 +81,7 @@ void lab1::string::downcase(unsigned first, unsigned last) {
 						m_string[j] += ('a' - 'A');
 }
 
-void lab1::string::togglecase(unsigned first, unsigned last) {
+void common::string::togglecase(unsigned first, unsigned last) {
 		if (first >= last) {
 				throw std::exception();
 		}
@@ -97,7 +97,7 @@ void lab1::string::togglecase(unsigned first, unsigned last) {
 						m_string[j] -= ('a' - 'A');
 }
 
-std::ostream& lab1::operator<<(std::ostream& os, const string& s) {
+std::ostream& common::operator<<(std::ostream& os, const string& s) {
 		if (s.len() > 0) {
 				for (unsigned j = 0; j < s.len(); j++)
 						os << s[j];
@@ -107,30 +107,30 @@ std::ostream& lab1::operator<<(std::ostream& os, const string& s) {
 		return os;
 }
 
-std::istream& lab1::operator>>(std::istream& is, string& s) {
+std::istream& common::operator>>(std::istream& is, string& s) {
 		char* c = new char[1000];
 		is >> c;
-		s = lab1::string(c);
+		s = common::string(c);
 		delete[] c;
 
 		return is;
 }
 
-char lab1::string::operator[](unsigned j) const {
+char common::string::operator[](unsigned j) const {
 		if (j >= m_length) throw std::runtime_error("Out of range");
 		return m_string[j];
 }
 
-char& lab1::string::operator[](unsigned j) {
+char& common::string::operator[](unsigned j) {
 		if (j >= m_length) throw std::runtime_error("Out of range");
 		return m_string[j];
 }
 
-const char* lab1::string::c_str() const noexcept {
+const char* common::string::c_str() const noexcept {
 		return m_string;
 }
 
-lab1::string& lab1::string::operator=(const string& s) {
+common::string& common::string::operator=(const string& s) {
 		if (this == &s) return *this;
 
 		delete[] m_string;
@@ -141,7 +141,7 @@ lab1::string& lab1::string::operator=(const string& s) {
 		return *this;
 }
 
-lab1::string& lab1::string::operator+=(const string& s) {
+common::string& common::string::operator+=(const string& s) {
 		unsigned len = m_length + s.len();
 		char* str = new char[len];
 
@@ -157,27 +157,27 @@ lab1::string& lab1::string::operator+=(const string& s) {
 		return *this;
 }
 
-lab1::string lab1::operator+(const string& lhs, const string& rhs) {
-		return lab1::string(lhs) += lab1::string(rhs);
+common::string common::operator+(const string& lhs, const string& rhs) {
+		return common::string(lhs) += common::string(rhs);
 }
 
-lab1::string lab1::operator+(const string& lhs, char rhs) {
-		return lab1::string(lhs) += lab1::string(rhs);
+common::string common::operator+(const string& lhs, char rhs) {
+		return common::string(lhs) += common::string(rhs);
 }
 
-lab1::string lab1::operator+(const string& lhs, const char* rhs) {
-		return lab1::string(lhs) += lab1::string(rhs);
+common::string common::operator+(const string& lhs, const char* rhs) {
+		return common::string(lhs) += common::string(rhs);
 }
 
-lab1::string lab1::operator+(char lhs, const string& rhs) {
-		return lab1::string(lhs) += rhs;
+common::string common::operator+(char lhs, const string& rhs) {
+		return common::string(lhs) += rhs;
 }
 
-lab1::string lab1::operator+(const char* lhs, const string& rhs) {
-		return lab1::string(lhs) += rhs;
+common::string common::operator+(const char* lhs, const string& rhs) {
+		return common::string(lhs) += rhs;
 }
 
-bool lab1::operator==(const string& lhs, const string& rhs) {
+bool common::operator==(const string& lhs, const string& rhs) {
 		if (lhs.len() != rhs.len()) return false;
 
 		unsigned cap = lhs.len();
@@ -186,45 +186,45 @@ bool lab1::operator==(const string& lhs, const string& rhs) {
 		return (n == cap);
 }
 
-bool lab1::operator==(const string& lhs, char rhs) {
+bool common::operator==(const string& lhs, char rhs) {
 		return (lhs == string(rhs));
 }
 
-bool lab1::operator==(const string& lhs, const char* rhs) {
+bool common::operator==(const string& lhs, const char* rhs) {
 		return (lhs == string(rhs));
 }
 
-bool lab1::operator==(char lhs, const string& rhs) {
+bool common::operator==(char lhs, const string& rhs) {
 		return (string(lhs) == rhs);
 }
 
-bool lab1::operator==(const char* lhs, const string& rhs) {
+bool common::operator==(const char* lhs, const string& rhs) {
 		return (string(lhs) == rhs);
 }
 
-bool lab1::operator!=(const string& lhs, const string& rhs) {
+bool common::operator!=(const string& lhs, const string& rhs) {
 		return !(lhs == rhs);
 }
 
-bool lab1::operator!=(const string& lhs, char rhs) {
+bool common::operator!=(const string& lhs, char rhs) {
 		return !(lhs == rhs);
 }
 
-bool lab1::operator!=(const string& lhs, const char* rhs) {
+bool common::operator!=(const string& lhs, const char* rhs) {
 		return !(lhs == rhs);
 }
 
-bool lab1::operator!=(char lhs, const string& rhs) {
+bool common::operator!=(char lhs, const string& rhs) {
 		return !(lhs == rhs);
 }
 
-bool lab1::operator!=(const char* lhs, const string& rhs) {
+bool common::operator!=(const char* lhs, const string& rhs) {
 		return !(lhs == rhs);
 }
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "hicpp-signed-bitwise"
-bool lab1::operator>(const string& lhs, const string& rhs) {
+bool common::operator>(const string& lhs, const string& rhs) {
 		unsigned cap = (lhs.len() < rhs.len()) ? lhs.len() : rhs.len();
 		unsigned n = 0;
 		while ((n < cap) && (lhs[n] == rhs[n])) n++;
@@ -240,88 +240,88 @@ bool lab1::operator>(const string& lhs, const string& rhs) {
 }
 #pragma clang diagnostic pop
 
-bool lab1::operator>(const string& lhs, char rhs) {
+bool common::operator>(const string& lhs, char rhs) {
 		return (lhs > string(rhs));
 }
 
-bool lab1::operator>(const string& lhs, const char* rhs) {
+bool common::operator>(const string& lhs, const char* rhs) {
 		return (lhs > string(rhs));
 }
 
-bool lab1::operator>(char lhs, const string& rhs) {
+bool common::operator>(char lhs, const string& rhs) {
 		return (string(lhs) > rhs);
 }
 
-bool lab1::operator>(const char* lhs, const string& rhs) {
+bool common::operator>(const char* lhs, const string& rhs) {
 		return (string(lhs) > rhs);
 }
 
-bool lab1::operator>=(const string& lhs, const string& rhs) {
+bool common::operator>=(const string& lhs, const string& rhs) {
 		return (lhs == rhs) || (lhs > rhs);
 }
 
-bool lab1::operator>=(const string& lhs, char rhs) {
+bool common::operator>=(const string& lhs, char rhs) {
 		return (lhs == rhs) || (lhs > rhs);
 }
 
-bool lab1::operator>=(const string& lhs, const char* rhs) {
+bool common::operator>=(const string& lhs, const char* rhs) {
 		return (lhs == rhs) || (lhs > rhs);
 }
 
-bool lab1::operator>=(char lhs, const string& rhs) {
+bool common::operator>=(char lhs, const string& rhs) {
 		return (lhs == rhs) || (lhs > rhs);
 }
 
-bool lab1::operator>=(const char* lhs, const string& rhs) {
+bool common::operator>=(const char* lhs, const string& rhs) {
 		return (lhs == rhs) || (lhs > rhs);
 }
 
-bool lab1::operator< (const string& lhs, const string& rhs)
+bool common::operator< (const string& lhs, const string& rhs)
 {
 		return !(lhs == rhs) && !(lhs > rhs);
 }
 
-bool lab1::operator< (const string& lhs, char rhs)
+bool common::operator< (const string& lhs, char rhs)
 {
 		return !(lhs == rhs) && !(lhs > rhs);
 }
 
-bool lab1::operator< (const string& lhs, const char* rhs)
+bool common::operator< (const string& lhs, const char* rhs)
 {
 		return !(lhs == rhs) && !(lhs > rhs);
 }
 
-bool lab1::operator< (char lhs, const string& rhs)
+bool common::operator< (char lhs, const string& rhs)
 {
 		return !(lhs == rhs) && !(lhs > rhs);
 }
 
-bool lab1::operator< (const char* lhs, const string& rhs)
+bool common::operator< (const char* lhs, const string& rhs)
 {
 		return !(lhs == rhs) && !(lhs > rhs);
 }
 
-bool lab1::operator<= (const string& lhs, const string& rhs)
+bool common::operator<= (const string& lhs, const string& rhs)
 {
 		return !(lhs > rhs);
 }
 
-bool lab1::operator<= (const string& lhs, char rhs)
+bool common::operator<= (const string& lhs, char rhs)
 {
 		return !(lhs > rhs);
 }
 
-bool lab1::operator<= (const string& lhs, const char* rhs)
+bool common::operator<= (const string& lhs, const char* rhs)
 {
 		return !(lhs > rhs);
 }
 
-bool lab1::operator<= (char lhs, const string& rhs)
+bool common::operator<= (char lhs, const string& rhs)
 {
 		return !(lhs > rhs);
 }
 
-bool lab1::operator<= (const char* lhs, const string& rhs)
+bool common::operator<= (const char* lhs, const string& rhs)
 {
 		return !(lhs > rhs);
 }

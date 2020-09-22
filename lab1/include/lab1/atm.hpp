@@ -7,7 +7,7 @@
 namespace lab1 {
     class ATM {
         public:
-            ATM(const lab1::string& id, float maxWithdraw = 0.f, float initialBalance = 0.f);
+            ATM(const common::string& id, float maxWithdraw = 0.f, float initialBalance = 0.f);
 
             void deposit(float amount);
             void withdraw(float amount);
@@ -16,13 +16,11 @@ namespace lab1 {
             float balance() const noexcept;
             float maxWithdraw() const noexcept;
 
-            /*friend std::ostream& operator<<(std::ostream& ostream, const ATM& atm);*/
-
         protected:
-            std::basic_string<char, std::char_traits<char>, std::allocator<char>> to_string();
+            common::string to_string();
 
         private:
-            lab1::string m_id;
+            common::string m_id;
             float m_balance;
             float m_maxWithdraw;
     };

@@ -5,7 +5,7 @@
 #include <string>
 #include <sstream>
 
-namespace lab1 {
+namespace common {
 		class string {
 				public:
 						string();

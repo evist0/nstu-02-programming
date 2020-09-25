@@ -1,5 +1,6 @@
 #include <lab1/atm.hpp>
 #include <cstdlib>
+#include <iostream>
 
 size_t lab1::ATM::atm_amount = 0;
 
@@ -12,6 +13,8 @@ lab1::ATM::ATM() noexcept {
 }
 
 lab1::ATM::ATM(const lab1::ATM& atm) {
+    std::cout << "Я конструктор копирования банкомата: " << m_id << std::endl;
+
     m_id = new common::string(*atm.m_id);
     m_balance = new float(*atm.m_balance);
     m_maxWithdraw = new float(*atm.m_maxWithdraw);
@@ -32,6 +35,20 @@ lab1::ATM::ATM(const common::string& id, float maxWithdraw, float initialBalance
     m_balance = new float(initialBalance);
 
     atm_amount++;
+}
+
+lab1::ATM& lab1::ATM::operator=(const lab1::ATM& atm) {
+    if(this != &atm) {
+        delete m_id;
+        delete m_maxWithdraw;
+        delete m_balance;
+
+        m_id = new common::string(*atm.m_id);
+        m_balance = new float(*atm.m_balance);
+        m_maxWithdraw = new float(*atm.m_maxWithdraw);
+    }
+
+    return *this;
 }
 
 const char* lab1::ATM::id() const noexcept {
@@ -83,13 +100,16 @@ common::string lab1::ATM::to_string() {
     common::string result =
             common::string("<==== ATM INFORMATION ====> \n") +
                     common::string("ATM Id: ") + *m_id + '\n' +
-                    "Balance: " + balance_string + "\n" +
-                    "Max withdraw: " + maxWithdraw_string + "\n\n";
+                    common::string("Balance: ") + balance_string + "\n" +
+                    common::string("Max withdraw: ") + maxWithdraw_string + "\n\n";
 
     return result;
 }
 
 lab1::ATM::~ATM() {
+    std::cout << "Я деструктор банкомата: " << m_id << std::endl;
+
+
     delete m_id;
     delete m_maxWithdraw;
     delete m_balance;

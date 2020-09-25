@@ -14,6 +14,8 @@ namespace lab1 {
             void deposit(float amount);
             void withdraw(float amount);
 
+            ATM& operator=(const lab1::ATM& other);
+
             const char* id() const noexcept;
             float balance() const noexcept;
             float maxWithdraw() const noexcept;

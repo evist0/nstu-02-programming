@@ -1,10 +1,11 @@
 #include <iostream>
 #include <vector>
 #include <iterator>
-#include <lab1/atm.hpp>
+#include <lab/atm.hpp>
 
 bool isMenu = true;
-std::vector<lab1::ATM> container = std::vector<lab1::ATM>();
+
+std::vector<lab::ATM> container = std::vector<lab::ATM>();
 
 void input_atm();
 
@@ -18,7 +19,7 @@ void delete_object();
 
 void print_objects();
 
-lab1::ATM* select_object(size_t listIndex);
+lab::ATM* select_object(size_t listIndex);
 
 void menu();
 
@@ -160,7 +161,7 @@ void modify_object() {
             std::cout << "Введите сумму: ";
             std::cin >> sum;
 
-            atm->deposit(sum);
+            *atm = *atm + sum;
             break;
         case 2:
             selected = true;
@@ -168,11 +169,10 @@ void modify_object() {
             std::cout << "Введите сумму: ";
             std::cin >> sum;
 
-            atm->withdraw(sum);
+            *atm = *atm - sum;
             break;
         case 3:
             selected = true;
-
             break;
         default:
             std::cout << "Неизвестная команда";
@@ -196,10 +196,9 @@ void delete_object() {
 
 void print_objects() {
     auto atm_iterator = container.begin();
-
     size_t i = 0;
     for (; atm_iterator != container.end(); atm_iterator++) {
-        std::cout << ++i << ". " << atm_iterator->to_string();
+        std::cout << ++i << ". " << atm_iterator->operator()();
     }
 }
 
@@ -227,11 +226,11 @@ void copy_atm() {
     std::cout << "Введите номер банкомата в списке, который будет скопирован:" << std::endl;
     std::cin >> listIndex;
 
-    auto atmToCopy = select_object(listIndex);
+    lab::ATM* atmToCopy = select_object(listIndex);
 
     container.emplace_back(*atmToCopy);
 }
 
-lab1::ATM* select_object(size_t listIndex) {
+lab::ATM* select_object(size_t listIndex) {
     return &container[listIndex - 1];
 }

@@ -1,10 +1,10 @@
-#include <lab1/atm.hpp>
+#include <lab/atm.hpp>
 #include <cstdlib>
 #include <iostream>
 
-size_t lab1::ATM::atm_amount = 0;
+size_t lab::ATM::atm_amount = 0;
 
-lab1::ATM::ATM() noexcept {
+lab::ATM::ATM() noexcept {
     m_id = new common::string("not_provided");
     m_maxWithdraw = new float(0.f);
     m_balance = new float(0.f);
@@ -12,9 +12,7 @@ lab1::ATM::ATM() noexcept {
     atm_amount++;
 }
 
-lab1::ATM::ATM(const lab1::ATM& atm) {
-    std::cout << "Я конструктор копирования банкомата: " << m_id << std::endl;
-
+lab::ATM::ATM(const lab::ATM& atm) {
     m_id = new common::string(*atm.m_id);
     m_balance = new float(*atm.m_balance);
     m_maxWithdraw = new float(*atm.m_maxWithdraw);
@@ -22,7 +20,7 @@ lab1::ATM::ATM(const lab1::ATM& atm) {
     atm_amount++;
 }
 
-lab1::ATM::ATM(const common::string& id, float maxWithdraw, float initialBalance) {
+lab::ATM::ATM(const common::string& id, float maxWithdraw, float initialBalance) {
     if (maxWithdraw < 0) {
         throw std::runtime_error("Max withdraw less than 0");
     }
@@ -37,33 +35,19 @@ lab1::ATM::ATM(const common::string& id, float maxWithdraw, float initialBalance
     atm_amount++;
 }
 
-lab1::ATM& lab1::ATM::operator=(const lab1::ATM& atm) {
-    if(this != &atm) {
-        delete m_id;
-        delete m_maxWithdraw;
-        delete m_balance;
-
-        m_id = new common::string(*atm.m_id);
-        m_balance = new float(*atm.m_balance);
-        m_maxWithdraw = new float(*atm.m_maxWithdraw);
-    }
-
-    return *this;
-}
-
-const char* lab1::ATM::id() const noexcept {
+const char* lab::ATM::id() const noexcept {
     return m_id->c_str();
 }
 
-float lab1::ATM::balance() const noexcept {
+float lab::ATM::balance() const noexcept {
     return *m_balance;
 }
 
-float lab1::ATM::maxWithdraw() const noexcept {
+float lab::ATM::maxWithdraw() const noexcept {
     return *m_maxWithdraw;
 }
 
-void lab1::ATM::deposit(float amount) {
+void lab::ATM::deposit(float amount) {
     if (amount < 0) {
         throw std::runtime_error("Negative depositing sum");
     }
@@ -71,7 +55,7 @@ void lab1::ATM::deposit(float amount) {
     *m_balance += amount;
 }
 
-void lab1::ATM::withdraw(float amount) {
+void lab::ATM::withdraw(float amount) {
     if (amount < 0) {
         throw std::runtime_error("Negative withdrawing sum");
     }
@@ -87,11 +71,11 @@ void lab1::ATM::withdraw(float amount) {
     *m_balance -= amount;
 }
 
-size_t lab1::ATM::get_atm_amount() {
+size_t lab::ATM::get_atm_amount() {
     return atm_amount;
 }
 
-common::string lab1::ATM::to_string() {
+common::string lab::ATM::to_string() {
     char balance_string[64], maxWithdraw_string[64];
 
     gcvt(*m_balance, 64, balance_string);
@@ -106,13 +90,46 @@ common::string lab1::ATM::to_string() {
     return result;
 }
 
-lab1::ATM::~ATM() {
-    std::cout << "Я деструктор банкомата: " << m_id << std::endl;
-
-
+lab::ATM::~ATM() {
     delete m_id;
     delete m_maxWithdraw;
     delete m_balance;
 
     atm_amount--;
+}
+
+lab::ATM lab::operator-(lab::ATM& atm, float withdrawSum) {
+    atm.withdraw(withdrawSum);
+    return atm;
+}
+
+lab::ATM lab::operator+(lab::ATM& atm, float depositSum) {
+    atm.deposit(depositSum);
+    return atm;
+}
+
+bool lab::operator==(lab::ATM& atm, float checkSum) {
+    return atm.balance() == checkSum;
+}
+
+bool lab::operator!=(lab::ATM& atm, float checkSum) {
+    return atm.balance() != checkSum;
+}
+
+common::string lab::ATM::operator()() {
+    return this->to_string();
+}
+
+lab::ATM& lab::ATM::operator=(const lab::ATM& atm) {
+    if(this != &atm) {
+        delete m_id;
+        delete m_maxWithdraw;
+        delete m_balance;
+
+        m_id = new common::string(*atm.m_id);
+        m_balance = new float(*atm.m_balance);
+        m_maxWithdraw = new float(*atm.m_maxWithdraw);
+    }
+
+    return *this;
 }

@@ -1,20 +1,30 @@
-#ifndef LAB1_ATM_HPP
-#define LAB1_ATM_HPP
+#ifndef LAB_ATM_HPP
+#define LAB_ATM_HPP
 
 #include <iosfwd>
 #include <common/string.hpp>
 
-namespace lab1 {
+namespace lab {
     class ATM {
         public:
             ATM() noexcept;
-            ATM(const lab1::ATM& atm);
+            ATM(const lab::ATM& atm);
             ATM(const common::string& id, float maxWithdraw = 0.f, float initialBalance = 0.f);
 
             void deposit(float amount);
             void withdraw(float amount);
 
-            ATM& operator=(const lab1::ATM& other);
+            ATM& operator=(const lab::ATM& other);
+
+            friend ATM operator-(ATM& atm, float withdrawSum);
+
+            friend ATM operator+(ATM& atm, float depositSum);
+
+            friend bool operator==(ATM& atm, float checkSum);
+
+            friend bool operator!=(ATM& atm, float checkSum);
+
+            common::string operator()();
 
             const char* id() const noexcept;
             float balance() const noexcept;
@@ -32,7 +42,13 @@ namespace lab1 {
             float* m_maxWithdraw;
     };
 
-    /*std::ostream& operator<<(std::ostream& ostream, const ATM& atm);*/
+    ATM operator-(ATM& atm, float withdrawSum);
+
+    ATM operator+(ATM& atm, float depositSum);
+
+    bool operator==(ATM& atm, float checkSum);
+
+    bool operator!=(ATM& atm, float checkSum);
 }
 
-#endif //LAB1_ATM_HPP
+#endif //LAB_ATM_HPP

@@ -19,6 +19,8 @@ void delete_object();
 
 void print_objects();
 
+void compare_balance();
+
 lab::ATM* select_object(size_t listIndex);
 
 void menu();
@@ -39,10 +41,11 @@ void menu() {
         std::cout << "2. Модифицировать объект" << std::endl;
         std::cout << "3. Удалить объект" << std::endl;
         std::cout << "4. Вывести список объектов" << std::endl;
+        std::cout << "5. Сравнить баланс (оператор сравнения)" << std::endl;
 
         std::cout << std::endl;
 
-        std::cout << "5.Выход" << std::endl;
+        std::cout << "6.Выход" << std::endl;
 
         int action_id = 0;
 
@@ -70,6 +73,11 @@ void menu() {
             print_objects();
             break;
         case 5:
+            selected = true;
+
+            compare_balance();
+            break;
+        case 6:
             selected = true;
 
             isMenu = false;
@@ -127,6 +135,11 @@ void create_object() {
 }
 
 void modify_object() {
+    if(container.empty()) {
+        std::cout << "Контейнер пуст!" << std::endl;
+        return;
+    }
+
     print_objects();
 
     size_t listIndex;
@@ -199,6 +212,34 @@ void print_objects() {
     size_t i = 0;
     for (; atm_iterator != container.end(); atm_iterator++) {
         std::cout << ++i << ". " << atm_iterator->operator()();
+    }
+}
+
+void compare_balance() {
+    if(container.empty()) {
+        std::cout << "Контейнер пуст!" << std::endl;
+        return;
+    }
+
+    print_objects();
+
+    size_t listIndex;
+
+    std::cout << "Введите номер банкомата в списке, баланс которого будет сравниваться:" << std::endl;
+    std::cin >> listIndex;
+
+    auto atm = select_object(listIndex);
+
+    float balanceToCompare;
+
+    std::cout << "Введите число:" << std::endl;
+    std::cin >> balanceToCompare;
+
+    if (*atm == balanceToCompare) {
+        std::cout << "Сравнение успешно!" << std::endl;
+    }
+    else {
+        std::cout << "Сравнение провалено!" << std::endl;
     }
 }
 

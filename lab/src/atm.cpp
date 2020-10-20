@@ -123,12 +123,10 @@ common::string lab::ATM::operator()() {
 lab::ATM& lab::ATM::operator=(const lab::ATM& atm) {
     if(this != &atm) {
         delete m_id;
-        delete m_maxWithdraw;
-        delete m_balance;
 
         m_id = new common::string(*atm.m_id);
-        m_balance = new float(*atm.m_balance);
-        m_maxWithdraw = new float(*atm.m_maxWithdraw);
+        *m_balance = *atm.m_balance;
+        *m_maxWithdraw = *atm.m_maxWithdraw;
     }
 
     return *this;

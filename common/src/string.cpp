@@ -1,7 +1,5 @@
 #include <common/string.hpp>
 
-// TODO: Rewrite strings due to terminating zero undefined behaviour
-
 common::string::string() {
     m_length = 0;
     m_string = new char[1]{ '\0' };

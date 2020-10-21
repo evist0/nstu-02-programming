@@ -3,7 +3,7 @@
 
 #include <iosfwd>
 #include <string>
-#include <sstream>
+#include <fstream>
 
 namespace common {
 		class string {
@@ -82,8 +82,8 @@ namespace common {
 						unsigned m_length;
 		};
 
-		std::ostream& operator<<(std::ostream& so, const string& s);
-		std::istream& operator>>(std::istream& so, string& s);
+		std::ostream& operator<<(std::ostream& os, const string& s);
+		std::istream& operator>>(std::istream& is, string& s);
 
 		string operator+(const string& lhs, const string& rhs);
 		string operator+(const string& lhs, char rhs);

@@ -2,6 +2,7 @@
 #define LAB_ATM_HPP
 
 #include <iosfwd>
+#include <fstream>
 #include <common/string.hpp>
 
 namespace lab {
@@ -23,6 +24,18 @@ namespace lab {
             friend bool operator==(ATM& atm, float checkSum);
 
             friend bool operator!=(ATM& atm, float checkSum);
+
+            friend std::istream& operator>>(std::istream &in, const ATM& atm);
+
+            friend std::ostream& operator<<(std::ostream &out, const ATM& atm);
+
+            friend std::ifstream& operator>>(std::ifstream &in, const ATM& atm);
+
+            friend std::ofstream& operator<<(std::ofstream &out, const ATM& atm);
+
+            static lab::ATM from_binary(std::ifstream &in);
+
+            std::ofstream& to_binary(std::ofstream &out);
 
             common::string operator()();
 
@@ -49,6 +62,14 @@ namespace lab {
     bool operator==(ATM& atm, float checkSum);
 
     bool operator!=(ATM& atm, float checkSum);
+
+    std::istream& operator>>(std::istream &in, const ATM& atm);
+
+    std::ostream& operator<<(std::ostream &out, const ATM& atm);
+
+    std::ifstream& operator>>(std::ifstream &in, const ATM& atm);
+
+    std::ofstream& operator<<(std::ofstream &out, const ATM& atm);
 }
 
 #endif //LAB_ATM_HPP

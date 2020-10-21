@@ -1,6 +1,7 @@
 #include <lab/atm.hpp>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 
 size_t lab::ATM::atm_amount = 0;
 
@@ -9,7 +10,7 @@ lab::ATM::ATM() noexcept {
     m_maxWithdraw = new float(0.f);
     m_balance = new float(0.f);
 
-    atm_amount++;
+    ++atm_amount;
 }
 
 lab::ATM::ATM(const lab::ATM& atm) {
@@ -17,7 +18,7 @@ lab::ATM::ATM(const lab::ATM& atm) {
     m_balance = new float(*atm.m_balance);
     m_maxWithdraw = new float(*atm.m_maxWithdraw);
 
-    atm_amount++;
+    ++atm_amount;
 }
 
 lab::ATM::ATM(const common::string& id, float maxWithdraw, float initialBalance) {
@@ -32,7 +33,7 @@ lab::ATM::ATM(const common::string& id, float maxWithdraw, float initialBalance)
     m_maxWithdraw = new float(maxWithdraw);
     m_balance = new float(initialBalance);
 
-    atm_amount++;
+    ++atm_amount;
 }
 
 const char* lab::ATM::id() const noexcept {
@@ -95,7 +96,7 @@ lab::ATM::~ATM() {
     delete m_maxWithdraw;
     delete m_balance;
 
-    atm_amount--;
+    --atm_amount;
 }
 
 lab::ATM lab::operator-(lab::ATM& atm, float withdrawSum) {
@@ -121,7 +122,7 @@ common::string lab::ATM::operator()() {
 }
 
 lab::ATM& lab::ATM::operator=(const lab::ATM& atm) {
-    if(this != &atm) {
+    if (this != &atm) {
         delete m_id;
 
         m_id = new common::string(*atm.m_id);
@@ -130,4 +131,72 @@ lab::ATM& lab::ATM::operator=(const lab::ATM& atm) {
     }
 
     return *this;
+}
+
+std::istream& lab::operator>>(std::istream& in, const lab::ATM& atm) {
+    std::cout << "Input ID:" << std::endl;
+    in >> *atm.m_id;
+
+    std::cout << "Input initial balance:" << std::endl;
+    in >> *atm.m_balance;
+
+    std::cout << "Input max withdraw sum:" << std::endl;
+    in >> *atm.m_maxWithdraw;
+
+    return in;
+}
+
+std::ostream& lab::operator<<(std::ostream& out, const lab::ATM& atm) {
+    out <<
+        "<- ATM ->" << std::endl <<
+        "ID: " << atm.id() << std::endl <<
+        "Balance: " << atm.balance() << std::endl <<
+        "Max withdraw: " << atm.maxWithdraw() << std::endl <<
+        std::endl;
+
+    return out;
+}
+
+std::ifstream& lab::operator>>(std::ifstream& in, const lab::ATM& atm) {
+    in >> static_cast<common::string>(*atm.m_id) >> *atm.m_balance >> *atm.m_maxWithdraw;
+
+    return in;
+}
+
+std::ofstream& lab::operator<<(std::ofstream& out, const lab::ATM& atm) {
+    out << atm.id() << " " << atm.balance() << " " << atm.maxWithdraw() << std::endl;
+
+    return out;
+}
+
+lab::ATM lab::ATM::from_binary(std::ifstream& in) {
+    size_t id_length = 0;
+    float balance;
+    float maxWithdraw;
+
+    in.read(reinterpret_cast<char*>(&id_length), sizeof(size_t));
+
+    char* id = new char[id_length+1];
+
+    in.read(id, id_length);
+    id[id_length] = '\0';
+
+    in.read(reinterpret_cast<char*>(&balance), sizeof(float));
+    in.read(reinterpret_cast<char*>(&maxWithdraw), sizeof(float));
+
+    return ATM(id, maxWithdraw, balance);
+}
+
+std::ofstream& lab::ATM::to_binary(std::ofstream& out) {
+    common::string id = *this->m_id;
+    size_t id_length = id.len();
+    float balance = *this->m_balance;
+    float maxWithdraw = *this->m_maxWithdraw;
+
+    out.write(reinterpret_cast<const char*>(&id_length), sizeof(size_t));
+    out.write(id.c_str(), id_length);
+    out.write(reinterpret_cast<const char*>(&balance), sizeof(float));
+    out.write(reinterpret_cast<const char*>(&maxWithdraw), sizeof(float));
+
+    return out;
 }

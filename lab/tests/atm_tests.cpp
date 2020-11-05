@@ -1,8 +1,8 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <lab/atm.hpp>
+#include <lab/atm_base.hpp>
 
-TEST_CASE("ATM works correctly") {
+TEST_CASE("ATM_Base works correctly") {
     SECTION("Constructor") {
         SECTION("Default") {
             lab::ATM test_1 = lab::ATM();

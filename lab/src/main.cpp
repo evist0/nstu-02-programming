@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <lab/atm.hpp>
+#include <atm/atm.hpp>
 #include <sstream>
 
 bool isMenu = true;
@@ -413,17 +413,19 @@ void load_text() {
 
     while (true) {
         common::string id;
+        common::string bank;
+        common::string location;
         float balance;
         float max_withdraw;
 
-        in >> id >> balance >> max_withdraw;
+        in >> id >> bank >> location >> balance >> max_withdraw;
 
         if (in.eof()) {
             in.close();
             return;
         }
 
-        container.emplace_back(id, balance, max_withdraw);
+        container.emplace_back(bank, location, id, balance, max_withdraw);
     }
 }
 

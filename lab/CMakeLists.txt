@@ -1,5 +1,11 @@
 project(lab_lib)
-add_library(lab_lib include/lab/atm.hpp src/atm.cpp)
+add_library(lab_lib
+        include/atm/atm_base.hpp
+        include/atm/atm.hpp
+        include/atm/atm_report.hpp
+        src/atm/atm_base.cpp
+        src/atm/atm.cpp
+        src/atm/atm_report.cpp)
 target_link_libraries(lab_lib PRIVATE common)
 target_include_directories(lab_lib PUBLIC include)
 

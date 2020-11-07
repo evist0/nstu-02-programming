@@ -99,20 +99,4 @@ lab::ATM_Base::~ATM_Base() {
     --atm_amount;
 }
 
-common::string lab::ATM_Base::operator()() {
-    return this->to_string();
-}
-
-lab::ATM_Base& lab::ATM_Base::operator=(const lab::ATM_Base& atm) {
-    if (this != &atm) {
-        delete m_id;
-
-        m_id = new common::string(*atm.m_id);
-        *m_balance = *atm.m_balance;
-        *m_maxWithdraw = *atm.m_maxWithdraw;
-    }
-
-    return *this;
-}
-
 

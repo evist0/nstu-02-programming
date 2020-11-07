@@ -99,24 +99,6 @@ lab::ATM_Base::~ATM_Base() {
     --atm_amount;
 }
 
-lab::ATM_Base lab::operator-(lab::ATM_Base& atm, float withdrawSum) {
-    atm.withdraw(withdrawSum);
-    return atm;
-}
-
-lab::ATM_Base lab::operator+(lab::ATM_Base& atm, float depositSum) {
-    atm.deposit(depositSum);
-    return atm;
-}
-
-bool lab::operator==(lab::ATM_Base& atm, float checkSum) {
-    return atm.balance() == checkSum;
-}
-
-bool lab::operator!=(lab::ATM_Base& atm, float checkSum) {
-    return atm.balance() != checkSum;
-}
-
 common::string lab::ATM_Base::operator()() {
     return this->to_string();
 }

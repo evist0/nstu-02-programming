@@ -23,7 +23,7 @@ void delete_object();
 
 void print_objects();
 
-void compare_balance();
+void show_logs();
 
 void save_objects();
 
@@ -53,7 +53,7 @@ void menu() {
         std::cout << "2. Модифицировать объект" << std::endl;
         std::cout << "3. Удалить объект" << std::endl;
         std::cout << "4. Вывести список объектов" << std::endl;
-        std::cout << "5. Сравнить баланс (оператор сравнения)" << std::endl;
+        std::cout << "5. Посмотреть логи" << std::endl;
         std::cout << "6. Сохранить объекты" << std::endl;
         std::cout << "7. Загрузить объекты" << std::endl;
 
@@ -89,7 +89,7 @@ void menu() {
         case 5:
             selected = true;
 
-            compare_balance();
+            show_logs();
             break;
         case 6:
             selected = true;
@@ -266,7 +266,7 @@ void print_objects() {
     }
 }
 
-void compare_balance() {
+void show_logs() {
     if (container.empty()) {
         std::cout << "Контейнер пуст!" << std::endl;
         return;
@@ -276,22 +276,12 @@ void compare_balance() {
 
     size_t listIndex;
 
-    std::cout << "Введите номер банкомата в списке, баланс которого будет сравниваться:" << std::endl;
+    std::cout << "Введите номер банкомата в списке:" << std::endl;
     std::cin >> listIndex;
 
     auto atm = select_object(listIndex);
 
-    float balanceToCompare;
-
-    std::cout << "Введите число:" << std::endl;
-    std::cin >> balanceToCompare;
-
-    if (*atm == balanceToCompare) {
-        std::cout << "Сравнение успешно!" << std::endl;
-    }
-    else {
-        std::cout << "Сравнение провалено!" << std::endl;
-    }
+    std::cout << atm->log();
 }
 
 void save_objects() {

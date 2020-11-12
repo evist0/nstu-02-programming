@@ -145,6 +145,8 @@ common::string& common::string::operator=(const string& s) {
     m_string = new char[m_length];
     for (unsigned j = 0; j < m_length; j++)
         m_string[j] = s[j];
+
+    m_string[m_length] = '\0';
     return *this;
 }
 

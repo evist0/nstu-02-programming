@@ -1,204 +1,177 @@
 #include <iostream>
 #include <vector>
-#include <atm/atm.hpp>
 #include <sstream>
+#include <lab/atm/atm_type.hpp>
+#include <lab/atm/kinds/atm.hpp>
+#include <lab/atm/kinds/atm_fields.hpp>
+#include <lab/atm/atm_io.hpp>
 
 bool isMenu = true;
 
-std::vector<lab::ATM> container = std::vector<lab::ATM>();
+auto container = std::vector<lab::ATM*>();
 
-void menu();
+lab::ATM* select_atm(size_t listIndex) {
+    return container[listIndex - 1];
+}
 
-lab::ATM* select_object(size_t listIndex);
-
-void input_atm();
-
-void copy_atm();
-
-void create_object();
-
-void modify_object();
-
-void delete_object();
-
-void print_objects();
-
-void show_logs();
-
-void save_objects();
-
-void save_text();
-
-void save_bin();
-
-void load_objects();
-
-void load_text();
-
-void load_bin();
-
-int main() {
-    while (isMenu) {
-        menu();
+void print_atms() {
+    auto atm_iterator = container.begin();
+    size_t i = 0;
+    for (; atm_iterator != container.end(); atm_iterator++) {
+        std::cout << ++i << ". " << **atm_iterator << std::endl;
     }
-}
-
-void menu() {
-    bool selected = false;
-
-    while (!selected) {
-        std::cout << "Выберите действие: " << std::endl;
-
-        std::cout << "1. Создать объект" << std::endl;
-        std::cout << "2. Модифицировать объект" << std::endl;
-        std::cout << "3. Удалить объект" << std::endl;
-        std::cout << "4. Вывести список объектов" << std::endl;
-        std::cout << "5. Посмотреть логи" << std::endl;
-        std::cout << "6. Сохранить объекты" << std::endl;
-        std::cout << "7. Загрузить объекты" << std::endl;
-
-        std::cout << std::endl;
-
-        std::cout << "8.Выход" << std::endl;
-
-        int action_id = 0;
-
-        std::cin >> action_id;
-
-        switch (action_id) {
-        case 1:
-            selected = true;
-
-            create_object();
-            break;
-        case 2:
-            selected = true;
-
-            modify_object();
-            break;
-        case 3:
-            selected = true;
-
-            delete_object();
-            break;
-        case 4:
-            selected = true;
-
-            print_objects();
-            break;
-        case 5:
-            selected = true;
-
-            show_logs();
-            break;
-        case 6:
-            selected = true;
-
-            save_objects();
-            break;
-        case 7:
-            selected = true;
-
-            load_objects();
-            break;
-        case 8:
-            selected = true;
-
-            isMenu = false;
-            break;
-        default:
-            std::cout << "Неизвестная команда";
-            break;
-        }
-    }
-}
-
-lab::ATM* select_object(size_t listIndex) {
-    return &container[listIndex - 1];
-}
-
-void input_atm() {
-    auto atm = new lab::ATM;
-
-    std::cin >> *atm;
-
-    container.push_back(*atm);
-
-    delete atm;
 }
 
 void copy_atm() {
-    print_objects();
+    print_atms();
 
     size_t listIndex;
 
     std::cout << "Введите номер банкомата в списке, который будет скопирован:" << std::endl;
     std::cin >> listIndex;
 
-    lab::ATM* atmToCopy = select_object(listIndex);
+    lab::ATM* atmToCopy = select_atm(listIndex);
 
-    container.emplace_back(*atmToCopy);
+    container.emplace_back(atmToCopy);
 }
 
-void create_object() {
+void create_atm_constructor(lab::ATM_type type) {
     bool selected = false;
 
     while (!selected) {
-        std::cout << "Выберите конструктор: " << std::endl;
+        std::cout << "Выберите тип конструктора: " << std::endl;
 
-        std::cout << "1. По умолчанию" << std::endl;
-        std::cout << "2. С аргументами" << std::endl;
-        std::cout << "3. Копирования" << std::endl;
+        std::cout << "1. С параметрами по умолчанию" << std::endl;
+        std::cout << "2. С параметрами" << std::endl;
 
         std::cout << std::endl;
 
-        std::cout << "4.Назад" << std::endl;
+        std::cout << "3.Назад" << std::endl;
 
         int action_id = 0;
 
         std::cin >> action_id;
 
-        switch (action_id) {
-        case 1:
+        if (action_id == 1) {
             selected = true;
 
-            container.emplace_back();
-            break;
-        case 2:
+            if (type == lab::ATM_type::Base) {
+                auto atm = new lab::ATM();
+                container.push_back(atm);
+            }
+
+            if (type == lab::ATM_type::Fields) {
+                auto atm = new lab::ATM_fields();
+                container.push_back(atm);
+            }
+        }
+
+        else if (action_id == 2) {
             selected = true;
 
-            input_atm();
-            break;
-        case 3:
-            selected = true;
+            if (type == lab::ATM_type::Base) {
+                common::string id;
+                std::cin >> id;
 
-            copy_atm();
-            break;
-        case 4:
-            selected = true;
+                float max_widthdraw;
+                std::cin >> max_widthdraw;
 
-            break;
-        default:
+                float balance;
+                std::cin >> balance;
+
+                auto atm = new lab::ATM(id, max_widthdraw, balance);
+                container.push_back(atm);
+            }
+
+            if (type == lab::ATM_type::Fields) {
+                common::string id;
+                std::cin >> id;
+
+                common::string bankname;
+                std::cin >> bankname;
+
+                common::string location;
+                std::cin >> location;
+
+                float max_widthdraw;
+                std::cin >> max_widthdraw;
+
+                float balance;
+                std::cin >> balance;
+
+                auto atm = new lab::ATM_fields(id, bankname, location, max_widthdraw, balance);
+                container.push_back(atm);
+            }
+        }
+
+        else if (action_id == 3) {
+            selected = true;
+        }
+
+        else {
             std::cout << "Неизвестная команда";
-            break;
         }
     }
 }
 
-void modify_object() {
+void create_atm() {
+    bool selected = false;
+
+    while (!selected) {
+        std::cout << "Выберите тип банкомата: " << std::endl;
+
+        std::cout << "1. Родитель" << std::endl;
+        std::cout << "2. С доп. полями" << std::endl;
+        std::cout << "3. //С отчётами" << std::endl;
+        std::cout << "4. Скопировать" << std::endl;
+
+        std::cout << std::endl;
+
+        std::cout << "5.Назад" << std::endl;
+
+        int action_id = 0;
+
+        std::cin >> action_id;
+
+        if (action_id == 1) {
+            selected = true;
+            create_atm_constructor(lab::ATM_type::Base);
+        }
+
+        else if (action_id == 2) {
+            selected = true;
+            create_atm_constructor(lab::ATM_type::Fields);
+        }
+
+        else if (action_id == 4) {
+            selected = true;
+            copy_atm();
+        }
+
+        else if (action_id == 5) {
+            selected = true;
+        }
+
+        else {
+            std::cout << "Неизвестная команда";
+        }
+    }
+}
+
+void modify_atm() {
     if (container.empty()) {
         std::cout << "Контейнер пуст!" << std::endl;
         return;
     }
 
-    print_objects();
+    print_atms();
 
     size_t listIndex;
 
     std::cout << "Введите номер банкомата в списке, который будет модифицирован:" << std::endl;
     std::cin >> listIndex;
 
-    auto atm = select_object(listIndex);
+    auto atm = select_atm(listIndex);
 
     bool selected = false;
 
@@ -245,8 +218,8 @@ void modify_object() {
     }
 }
 
-void delete_object() {
-    print_objects();
+void delete_atm() {
+    print_atms();
 
     size_t listIndex;
 
@@ -258,33 +231,37 @@ void delete_object() {
     container.erase(ptr);
 }
 
-void print_objects() {
+void save_text() {
+    std::ofstream out("ATMs.txt", std::ios::out);
+
+    if (!out) {
+        throw std::runtime_error("Невозможно открыть файл");
+    }
+
     auto atm_iterator = container.begin();
-    size_t i = 0;
     for (; atm_iterator != container.end(); atm_iterator++) {
-        std::cout << ++i << ". " << *atm_iterator;
-    }
-}
-
-void show_logs() {
-    if (container.empty()) {
-        std::cout << "Контейнер пуст!" << std::endl;
-        return;
+        lab::ATM_io::save_text(out, *atm_iterator);
     }
 
-    print_objects();
-
-    size_t listIndex;
-
-    std::cout << "Введите номер банкомата в списке:" << std::endl;
-    std::cin >> listIndex;
-
-    auto atm = select_object(listIndex);
-
-    std::cout << atm->log();
+    out.close();
 }
 
-void save_objects() {
+void save_bin() {
+    std::ofstream out("ATMs.bin", std::ios::out | std::ios::binary);
+
+    if (!out) {
+        throw std::runtime_error("Невозможно открыть файл");
+    }
+
+    auto atm_iterator = container.begin();
+    for (; atm_iterator != container.end(); atm_iterator++) {
+        lab::ATM_io::save_bin(out, *atm_iterator);
+    }
+
+    out.close();
+}
+
+void save_atms() {
     bool selected = false;
 
     while (!selected) {
@@ -323,44 +300,56 @@ void save_objects() {
     }
 }
 
-void save_text() {
-    std::ofstream out("ATMs.txt", std::ios::out);
+void load_text() {
+    container.clear();
 
-    if (!out) {
+    std::ifstream in("ATMs.txt", std::ios::in);
+
+    if (!in) {
         throw std::runtime_error("Невозможно открыть файл");
     }
 
-    auto atm_iterator = container.begin();
-    for (; atm_iterator != container.end(); atm_iterator++) {
-        out << *atm_iterator;
-    }
+    while (in.is_open()) {
+        auto atm = lab::ATM_io::load_text(in);
 
-    out.close();
+        if (atm != nullptr) {
+            container.push_back(atm);
+        }
+        else {
+            in.close();
+        }
+    }
 }
 
-void save_bin() {
-    std::ofstream out("ATMs.bin", std::ios::out | std::ios::binary);
+void load_bin() {
+    container.clear();
 
-    if (!out) {
+    std::ifstream in("ATMs.bin", std::ios::in | std::ios::binary);
+
+    if (!in) {
         throw std::runtime_error("Невозможно открыть файл");
     }
 
-    auto atm_iterator = container.begin();
-    for (; atm_iterator != container.end(); atm_iterator++) {
-        atm_iterator->to_binary(out);
-    }
+    while (in.is_open()) {
+        auto atm = lab::ATM_io::load_bin(in);
 
-    out.close();
+        if (atm != nullptr) {
+            container.push_back(atm);
+        }
+        else {
+            in.close();
+        }
+    }
 }
 
-void load_objects() {
+void load_atms() {
     bool selected = false;
 
     while (!selected) {
         std::cout << "Выберите способ: " << std::endl;
 
         std::cout << "1. Из текстового файла (ATMs.txt)" << std::endl;
-        std::cout << "2. Из бинарного файл (ATMs.bin)" << std::endl;
+        std::cout << "2. Из бинарного файла (ATMs.bin)" << std::endl;
 
         std::cout << std::endl;
 
@@ -392,51 +381,77 @@ void load_objects() {
     }
 }
 
-void load_text() {
-    container.clear();
+void menu() {
+    bool selected = false;
 
-    std::ifstream in("ATMs.txt", std::ios::in);
+    while (!selected) {
+        std::cout << "Выберите действие: " << std::endl;
 
-    if (!in) {
-        throw std::runtime_error("Невозможно открыть файл");
-    }
+        std::cout << "1. Создать объект" << std::endl;
+        std::cout << "2. Модифицировать объект" << std::endl;
+        std::cout << "3. Удалить объект" << std::endl;
+        std::cout << "4. Вывести список объектов" << std::endl;
+        std::cout << "5. Сохранить объекты" << std::endl;
+        std::cout << "6. Загрузить объекты" << std::endl;
 
-    while (true) {
-        common::string id;
-        common::string bank;
-        common::string location;
-        float balance;
-        float max_withdraw;
+        std::cout << std::endl;
 
-        in >> id >> bank >> location >> balance >> max_withdraw;
+        std::cout << "7.Выход" << std::endl;
 
-        if (in.eof()) {
-            in.close();
-            return;
+        int action_id = 0;
+
+        std::cin >> action_id;
+
+        switch (action_id) {
+        case 1:
+            selected = true;
+
+            create_atm();
+            break;
+        case 2:
+            selected = true;
+
+            modify_atm();
+            break;
+        case 3:
+            selected = true;
+
+            delete_atm();
+            break;
+        case 4:
+            selected = true;
+
+            print_atms();
+            break;
+        case 5:
+            selected = true;
+
+            save_atms();
+            break;
+        case 6:
+            selected = true;
+
+            load_atms();
+            break;
+        case 7:
+            selected = true;
+
+            isMenu = false;
+            break;
+        default:
+            std::cout << "Неизвестная команда";
+            break;
         }
-
-        container.emplace_back(bank, location, id, balance, max_withdraw);
     }
 }
 
-void load_bin() {
-    container.clear();
-
-    std::ifstream in("ATMs.bin", std::ios::in | std::ios::binary);
-
-    if (!in) {
-        throw std::runtime_error("Невозможно открыть файл");
-    }
-
-    while (true) {
-
-        lab::ATM new_atm = lab::ATM::from_binary(in);
-
-        if (in.eof()) {
-            in.close();
-            return;
+int main() {
+    while (isMenu) {
+        try {
+            menu();
         }
-
-        container.push_back(new_atm);
+        catch (std::runtime_error& err) {
+            std::cerr << err.what() << std::endl;
+        }
     }
 }

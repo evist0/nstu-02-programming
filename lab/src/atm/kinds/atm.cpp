@@ -92,8 +92,6 @@ bool operator!=(lab::ATM& atm, float check_sum) {
     return atm.balance() != check_sum;
 }
 
-
-
 lab::ATM::~ATM() {
     delete m_id;
     delete m_max_withdraw;
@@ -105,9 +103,9 @@ lab::ATM::~ATM() {
 void lab::ATM::write(std::ostream& out) {
     out <<
         "< ATM Base >" << std::endl <<
-        "ID: " << *this->m_id << std::endl <<
-        "Balance: " << *this->m_balance << std::endl <<
-        "Max withdraw: " << *this->m_max_withdraw << std::endl;
+        "ID: " << this->id() << std::endl <<
+        "Balance: " << this->balance() << std::endl <<
+        "Max withdraw: " << this->max_withdraw() << std::endl;
 }
 
 void lab::ATM::read(std::istream& in) {

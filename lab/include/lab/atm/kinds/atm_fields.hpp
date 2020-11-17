@@ -1,7 +1,7 @@
 #ifndef ATM_FIELDS_H
 #define ATM_FIELDS_H
 #include <common/string.hpp>
-#include "atm.hpp"
+#include <lab/atm/kinds/atm.hpp>
 
 namespace lab {
     class ATM_fields: public ATM {

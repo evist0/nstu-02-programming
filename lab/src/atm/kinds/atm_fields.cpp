@@ -42,11 +42,11 @@ const char* lab::ATM_fields::location() {
 void lab::ATM_fields::write(std::ostream& out) {
     out <<
         "< ATM with Fields >" << std::endl <<
-        "ID: " << *this->m_id << std::endl <<
-        "Bank name: " << *this->m_bankname << std::endl <<
-        "Location: " << *this->m_location << std::endl <<
-        "Balance: " << *this->m_balance << std::endl <<
-        "Max withdraw: " << *this->m_max_withdraw << std::endl;
+        "ID: " << this->id() << std::endl <<
+        "Bank name: " << this->bankname() << std::endl <<
+        "Location: " << this->location() << std::endl <<
+        "Balance: " << this->balance() << std::endl <<
+        "Max withdraw: " << this->max_withdraw() << std::endl;
 }
 
 void lab::ATM_fields::read(std::istream& in) {

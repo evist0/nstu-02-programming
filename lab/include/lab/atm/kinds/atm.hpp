@@ -15,8 +15,8 @@ namespace lab {
             float balance() const noexcept;
             float max_withdraw() const noexcept;
 
-            void deposit(float amount);
-            void withdraw(float amount);
+            virtual void deposit(float amount);
+            virtual void withdraw(float amount);
 
             friend ATM operator-(ATM& atm, float withdraw_sum);
             friend ATM operator+(ATM& atm, float deposit_sum);

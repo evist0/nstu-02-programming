@@ -2,11 +2,13 @@ project(lab_lib)
 add_library(lab_lib
         include/lab/atm/kinds/atm.hpp
         include/lab/atm/kinds/atm_fields.hpp
+        include/lab/atm/report.hpp
         include/lab/atm/kinds/atm_reports.hpp
         include/lab/atm/atm_type.hpp
         include/lab/atm/atm_io.hpp
         src/atm/kinds/atm.cpp
         src/atm/kinds/atm_fields.cpp
+        src/atm/report.cpp
         src/atm/kinds/atm_reports.cpp
         src/atm/atm_io.cpp)
 target_link_libraries(lab_lib PUBLIC common)

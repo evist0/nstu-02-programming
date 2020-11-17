@@ -2,6 +2,7 @@
 #include <lab/atm/atm_io.hpp>
 #include <lab/atm/atm_type.hpp>
 #include <lab/atm/kinds/atm_fields.hpp>
+#include <lab/atm/kinds/atm_reports.hpp>
 
 lab::ATM* lab::ATM_io::load_text(std::ifstream& in) {
     ATM_type type;
@@ -35,32 +36,69 @@ lab::ATM* lab::ATM_io::load_text(std::ifstream& in) {
         return new ATM_fields(id, bankname, location, max_withdraw, balance);
     }
 
-    else {
-        if (in.eof()) {
-            return nullptr;
+    else if (type == ATM_type::Reports) {
+        common::string id;
+        float max_withdraw;
+        float balance;
+        size_t reports_amount;
+
+        in >> id;
+        in >> max_withdraw;
+        in >> balance;
+        in >> reports_amount;
+
+        auto atm = new ATM_reports(id, max_withdraw, balance, true);
+
+        for (size_t i = 0; i < reports_amount; i++) {
+            auto report = lab::Report::from_text(in);
+
+            atm->reports.push_back(report);
         }
 
-        throw std::runtime_error("Неизвестный тип банкомата");
+        return atm;
+    }
+
+    else {
+        return nullptr;
     }
 }
 
 std::ofstream& lab::ATM_io::save_text(std::ofstream& out, lab::ATM* atm) {
-    if (auto casted = dynamic_cast<ATM*>(atm)) {
+
+    if (auto casted = dynamic_cast<ATM_fields*>(atm)) {
+        out << ATM_type::Fields << ' ';
+        out << casted->id() << ' ';
+        out << casted->bankname() << ' ';
+        out << casted->location() << ' ';
+        out << casted->max_withdraw() << ' ';
+        out << casted->balance();
+
+        out << std::endl;
+        return out;
+    }
+
+    else if (auto casted = dynamic_cast<ATM_reports*>(atm)) {
+        out << ATM_type::Reports << ' ';
+        out << casted->id() << ' ';
+        out << casted->max_withdraw() << ' ';
+        out << casted->balance() << ' ';
+        out << casted->reports_amount() << std::endl;
+
+        for (size_t i = 0; i < casted->reports_amount(); i++) {
+            out << ' ';
+            out << casted->reports[i] << std::endl;
+        }
+
+        return out;
+    }
+
+    else if (auto casted = dynamic_cast<ATM*>(atm)) {
         out << ATM_type::Base << ' ';
         out << casted->id() << ' ';
         out << casted->max_withdraw() << ' ';
         out << casted->balance() << ' ';
 
-        return out;
-    }
-
-    else if (auto casted = dynamic_cast<ATM_fields*>(atm)) {
-        out << ATM_type::Fields;
-        out << casted->id();
-        out << casted->bankname();
-        out << casted->location();
-        out << casted->max_withdraw();
-        out << casted->balance();
+        out << std::endl;
 
         return out;
     }
@@ -120,30 +158,13 @@ lab::ATM* lab::ATM_io::load_bin(std::ifstream& in) {
     }
 
     else {
-        if (in.eof()) {
-            return nullptr;
-        }
-
-        throw std::runtime_error("Неизвестный тип банкомата");
+        return nullptr;
     }
 }
 
 std::ofstream& lab::ATM_io::save_bin(std::ofstream& out, lab::ATM* atm) {
-    if (auto casted = dynamic_cast<ATM*>(atm)) {
-        size_t id_length = strlen(casted->id());
-        float max_withdraw = casted->max_withdraw();
-        float balance = casted->balance();
 
-        out.write(reinterpret_cast<const char*>(&id_length), sizeof(size_t));
-        out.write(casted->id(), id_length);
-
-        out.write(reinterpret_cast<const char*>(&max_withdraw), sizeof(float));
-        out.write(reinterpret_cast<const char*>(&balance), sizeof(float));
-
-        return out;
-    }
-
-    else if (auto casted = dynamic_cast<ATM_fields*>(atm)) {
+    if (auto casted = dynamic_cast<ATM_fields*>(atm)) {
         size_t id_length = strlen(casted->id());
         size_t bankname_length = strlen(casted->bankname());
         size_t location_length = strlen(casted->location());
@@ -159,6 +180,20 @@ std::ofstream& lab::ATM_io::save_bin(std::ofstream& out, lab::ATM* atm) {
 
         out.write(reinterpret_cast<const char*>(&location_length), sizeof(size_t));
         out.write(casted->location(), location_length);
+
+        out.write(reinterpret_cast<const char*>(&max_withdraw), sizeof(float));
+        out.write(reinterpret_cast<const char*>(&balance), sizeof(float));
+
+        return out;
+    }
+
+    else if (auto casted = dynamic_cast<ATM*>(atm)) {
+        size_t id_length = strlen(casted->id());
+        float max_withdraw = casted->max_withdraw();
+        float balance = casted->balance();
+
+        out.write(reinterpret_cast<const char*>(&id_length), sizeof(size_t));
+        out.write(casted->id(), id_length);
 
         out.write(reinterpret_cast<const char*>(&max_withdraw), sizeof(float));
         out.write(reinterpret_cast<const char*>(&balance), sizeof(float));

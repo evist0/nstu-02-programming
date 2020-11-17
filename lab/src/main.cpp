@@ -4,6 +4,7 @@
 #include <lab/atm/atm_type.hpp>
 #include <lab/atm/kinds/atm.hpp>
 #include <lab/atm/kinds/atm_fields.hpp>
+#include <lab/atm/kinds/atm_reports.hpp>
 #include <lab/atm/atm_io.hpp>
 
 bool isMenu = true;
@@ -12,6 +13,19 @@ auto container = std::vector<lab::ATM*>();
 
 lab::ATM* select_atm(size_t listIndex) {
     return container[listIndex - 1];
+}
+
+lab::ATM_reports* select_reports_atm(size_t relativeIndex) {
+    auto atm_iterator = container.begin();
+    size_t i = 0;
+    while (i != relativeIndex - 1) {
+        if (dynamic_cast<lab::ATM_reports*>(*atm_iterator)) {
+            ++i;
+        }
+        atm_iterator++;
+    }
+
+    return dynamic_cast<lab::ATM_reports*>(*atm_iterator);
 }
 
 void print_atms() {
@@ -60,8 +74,13 @@ void create_atm_constructor(lab::ATM_type type) {
                 container.push_back(atm);
             }
 
-            if (type == lab::ATM_type::Fields) {
+            else if (type == lab::ATM_type::Fields) {
                 auto atm = new lab::ATM_fields();
+                container.push_back(atm);
+            }
+
+            else if (type == lab::ATM_type::Reports) {
+                auto atm = new lab::ATM_reports();
                 container.push_back(atm);
             }
         }
@@ -83,7 +102,7 @@ void create_atm_constructor(lab::ATM_type type) {
                 container.push_back(atm);
             }
 
-            if (type == lab::ATM_type::Fields) {
+            else if (type == lab::ATM_type::Fields) {
                 common::string id;
                 std::cin >> id;
 
@@ -100,6 +119,20 @@ void create_atm_constructor(lab::ATM_type type) {
                 std::cin >> balance;
 
                 auto atm = new lab::ATM_fields(id, bankname, location, max_widthdraw, balance);
+                container.push_back(atm);
+            }
+
+            else if (type == lab::ATM_type::Reports) {
+                common::string id;
+                std::cin >> id;
+
+                float max_widthdraw;
+                std::cin >> max_widthdraw;
+
+                float balance;
+                std::cin >> balance;
+
+                auto atm = new lab::ATM_reports(id, max_widthdraw, balance);
                 container.push_back(atm);
             }
         }
@@ -122,7 +155,7 @@ void create_atm() {
 
         std::cout << "1. Родитель" << std::endl;
         std::cout << "2. С доп. полями" << std::endl;
-        std::cout << "3. //С отчётами" << std::endl;
+        std::cout << "3. С отчётами" << std::endl;
         std::cout << "4. Скопировать" << std::endl;
 
         std::cout << std::endl;
@@ -141,6 +174,11 @@ void create_atm() {
         else if (action_id == 2) {
             selected = true;
             create_atm_constructor(lab::ATM_type::Fields);
+        }
+
+        else if (action_id == 3) {
+            selected = true;
+            create_atm_constructor(lab::ATM_type::Reports);
         }
 
         else if (action_id == 4) {
@@ -381,6 +419,31 @@ void load_atms() {
     }
 }
 
+void view_reports() {
+    if (container.empty()) {
+        std::cout << "Контейнер пуст!" << std::endl;
+        return;
+    }
+
+    auto atm_iterator = container.begin();
+    size_t i = 0;
+    while (atm_iterator != container.end()) {
+        if (auto casted = dynamic_cast<lab::ATM_reports*>(*atm_iterator)) {
+            std::cout << ++i << ". " << *casted << std::endl;
+        }
+        atm_iterator++;
+    }
+
+    size_t relativeIndex = 0;
+
+    std::cout << "Введите номер банкомата: " << std::endl;
+    std::cin >> relativeIndex;
+
+    auto selected = select_reports_atm(relativeIndex);
+
+    std::cout << selected->log();
+}
+
 void menu() {
     bool selected = false;
 
@@ -393,10 +456,11 @@ void menu() {
         std::cout << "4. Вывести список объектов" << std::endl;
         std::cout << "5. Сохранить объекты" << std::endl;
         std::cout << "6. Загрузить объекты" << std::endl;
+        std::cout << "7. Посмотреть отчёты" << std::endl;
 
         std::cout << std::endl;
 
-        std::cout << "7.Выход" << std::endl;
+        std::cout << "8.Выход" << std::endl;
 
         int action_id = 0;
 
@@ -434,6 +498,11 @@ void menu() {
             load_atms();
             break;
         case 7:
+            selected = true;
+
+            view_reports();
+            break;
+        case 8:
             selected = true;
 
             isMenu = false;

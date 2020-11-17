@@ -11,7 +11,7 @@ namespace lab {
     };
 
     inline std::istream& operator>>(std::istream& in, lab::ATM_type& type) {
-        std::underlying_type_t<lab::ATM_type> number;
+        std::underlying_type_t<lab::ATM_type> number = 0;
         in >> number;
 
         switch (static_cast<lab::ATM_type>(number)) {

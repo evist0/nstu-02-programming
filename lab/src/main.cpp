@@ -338,8 +338,15 @@ void save_atms() {
     }
 }
 
-void load_text() {
+void clear() {
+    for (auto ptr : container)
+        delete ptr;
+
     container.clear();
+}
+
+void load_text() {
+    clear();
 
     std::ifstream in("ATMs.txt", std::ios::in);
 
@@ -360,7 +367,7 @@ void load_text() {
 }
 
 void load_bin() {
-    container.clear();
+    clear();
 
     std::ifstream in("ATMs.bin", std::ios::in | std::ios::binary);
 
@@ -504,6 +511,7 @@ void menu() {
             break;
         case 8:
             selected = true;
+            clear();
 
             isMenu = false;
             break;

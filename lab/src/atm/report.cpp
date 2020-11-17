@@ -63,12 +63,23 @@ lab::Report::Report(lab::Action action, std::chrono::time_point<std::chrono::sys
     this->m_actionSum = sum;
 }
 
-/*lab::Report lab::Report::from_binary(std::ifstream& in) {
-}*/
+lab::Report lab::Report::from_binary(std::ifstream& in) {
+    Action type;
+    std::chrono::time_point<std::chrono::system_clock> time;
+    float sum;
 
-/*void lab::Report::to_binary() {
+    in.read(reinterpret_cast<char*>(&type), sizeof(Action));
+    in.read(reinterpret_cast<char*>(&time), sizeof(std::chrono::time_point<std::chrono::system_clock>));
+    in.read(reinterpret_cast<char*>(&sum), sizeof(float));
 
-}*/
+    return {type, time, sum};
+}
+
+void lab::Report::to_binary(std::ofstream& out) {
+    out.write(reinterpret_cast<char*>(&this->m_actionType), sizeof(lab::Action));
+    out.write(reinterpret_cast<char*>(&this->m_time), sizeof(std::chrono::time_point<std::chrono::system_clock>));
+    out.write(reinterpret_cast<char*>(&this->m_actionSum), sizeof(float));
+}
 
 lab::Report lab::Report::from_text(std::ifstream& in) {
     Action type;
@@ -77,5 +88,5 @@ lab::Report lab::Report::from_text(std::ifstream& in) {
 
     in >> type >> time >> sum;
 
-    return {type, std::chrono::system_clock::time_point(std::chrono::seconds(time)), sum};
+    return { type, std::chrono::system_clock::time_point(std::chrono::seconds(time)), sum };
 }

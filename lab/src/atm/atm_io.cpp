@@ -5,13 +5,17 @@
 #include <lab/atm/kinds/atm_reports.hpp>
 
 lab::ATM* lab::ATM_io::load_text(std::ifstream& in) {
-    ATM_type type;
+    ATM_type type = ATM_type::Base;
     in >> type;
 
+    if (in.eof()) {
+        return nullptr;
+    }
+
     if (type == ATM_type::Base) {
-        common::string id;
-        float max_withdraw;
-        float balance;
+        common::string id = "";
+        float max_withdraw = 0.f;
+        float balance = 0.f;
 
         in >> id;
         in >> max_withdraw;
@@ -56,10 +60,6 @@ lab::ATM* lab::ATM_io::load_text(std::ifstream& in) {
         }
 
         return atm;
-    }
-
-    else {
-        return nullptr;
     }
 }
 
@@ -112,6 +112,10 @@ lab::ATM* lab::ATM_io::load_bin(std::ifstream& in) {
     ATM_type type;
     in.read(reinterpret_cast<char*>(&type), sizeof(ATM_type));
 
+    if (in.eof()) {
+        return nullptr;
+    }
+
     if (type == ATM_type::Base) {
         size_t id_length = 0;
 
@@ -157,20 +161,46 @@ lab::ATM* lab::ATM_io::load_bin(std::ifstream& in) {
         return new ATM_fields(id, bankname, location, max_withdraw, balance);
     }
 
-    else {
-        return nullptr;
+    else if (type == ATM_type::Reports) {
+        size_t id_length = 0;
+
+        float balance;
+        float max_withdraw;
+
+        in.read(reinterpret_cast<char*>(&id_length), sizeof(size_t));
+        char* id = new char[id_length + 1];
+        in.read(id, id_length);
+        id[id_length] = '\0';
+
+        in.read(reinterpret_cast<char*>(&max_withdraw), sizeof(float));
+        in.read(reinterpret_cast<char*>(&balance), sizeof(float));
+
+        size_t reports_amount;
+        in.read(reinterpret_cast<char*>(&reports_amount), sizeof(size_t));
+
+        auto atm = new ATM_reports(id, max_withdraw, balance, true);
+
+        for (size_t i = 0; i < reports_amount; i++) {
+            auto report = Report::from_binary(in);
+            atm->reports.push_back(report);
+        }
+
+        return atm;
     }
 }
 
 std::ofstream& lab::ATM_io::save_bin(std::ofstream& out, lab::ATM* atm) {
 
     if (auto casted = dynamic_cast<ATM_fields*>(atm)) {
+        ATM_type type = ATM_type::Fields;
         size_t id_length = strlen(casted->id());
         size_t bankname_length = strlen(casted->bankname());
         size_t location_length = strlen(casted->location());
 
         float max_withdraw = casted->max_withdraw();
         float balance = casted->balance();
+
+        out.write(reinterpret_cast<const char*>(&type), sizeof(ATM_type));
 
         out.write(reinterpret_cast<const char*>(&id_length), sizeof(size_t));
         out.write(casted->id(), id_length);
@@ -187,10 +217,36 @@ std::ofstream& lab::ATM_io::save_bin(std::ofstream& out, lab::ATM* atm) {
         return out;
     }
 
-    else if (auto casted = dynamic_cast<ATM*>(atm)) {
+    else if (auto casted = dynamic_cast<ATM_reports*>(atm)) {
+        ATM_type type = ATM_type::Reports;
         size_t id_length = strlen(casted->id());
         float max_withdraw = casted->max_withdraw();
         float balance = casted->balance();
+        size_t reports_amount = casted->reports_amount();
+
+        out.write(reinterpret_cast<const char*>(&type), sizeof(ATM_type));
+
+        out.write(reinterpret_cast<const char*>(&id_length), sizeof(size_t));
+        out.write(casted->id(), id_length);
+
+        out.write(reinterpret_cast<const char*>(&max_withdraw), sizeof(float));
+        out.write(reinterpret_cast<const char*>(&balance), sizeof(float));
+        out.write(reinterpret_cast<const char*>(&reports_amount), sizeof(size_t));
+
+        for (size_t i = 0; i < reports_amount; i++) {
+            casted->reports[i].to_binary(out);
+        }
+
+        return out;
+    }
+
+    else if (auto casted = dynamic_cast<ATM*>(atm)) {
+        ATM_type type = ATM_type::Base;
+        size_t id_length = strlen(casted->id());
+        float max_withdraw = casted->max_withdraw();
+        float balance = casted->balance();
+
+        out.write(reinterpret_cast<const char*>(&type), sizeof(ATM_type));
 
         out.write(reinterpret_cast<const char*>(&id_length), sizeof(size_t));
         out.write(casted->id(), id_length);

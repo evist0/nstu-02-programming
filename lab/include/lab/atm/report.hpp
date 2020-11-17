@@ -45,8 +45,8 @@ namespace lab {
             Action m_actionType;
             float m_actionSum;
         public:
-            void to_binary();
-            static Report from_binary(std::ifstream& in);
+/*            void to_binary();
+            static Report from_binary(std::ifstream& in);*/
             Report(Action action, std::chrono::time_point<std::chrono::system_clock> time, float sum);
             friend std::ostream& operator<<(std::ostream& out, const Report& report);
             friend std::ofstream& operator<<(std::ofstream& out, const Report& report);

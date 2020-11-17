@@ -41,7 +41,9 @@ std::ostream& lab::operator<<(std::ostream& out, const lab::Report& report) {
 }
 
 std::ofstream& lab::operator<<(std::ofstream& out, const lab::Report& report) {
-    out << report.m_actionType << ' ' << report.m_time.time_since_epoch().count() << ' ' << report.m_actionSum;
+    out << report.m_actionType << ' '
+        << std::chrono::duration_cast<std::chrono::seconds>(report.m_time.time_since_epoch()).count() << ' '
+        << report.m_actionSum;
 
     return out;
 }
@@ -61,19 +63,19 @@ lab::Report::Report(lab::Action action, std::chrono::time_point<std::chrono::sys
     this->m_actionSum = sum;
 }
 
-lab::Report lab::Report::from_binary(std::ifstream& in) {
-}
+/*lab::Report lab::Report::from_binary(std::ifstream& in) {
+}*/
 
-void lab::Report::to_binary() {
+/*void lab::Report::to_binary() {
 
-}
+}*/
 
 lab::Report lab::Report::from_text(std::ifstream& in) {
     Action type;
-    long long time;
+    std::chrono::system_clock::duration::rep time;
     float sum;
 
     in >> type >> time >> sum;
 
-    return Report(type, std::chrono::time_point<std::chrono::system_clock>(std::chrono::nanoseconds(time)), sum);
+    return {type, std::chrono::system_clock::time_point(std::chrono::seconds(time)), sum};
 }

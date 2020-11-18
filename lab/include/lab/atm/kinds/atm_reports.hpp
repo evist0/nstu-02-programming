@@ -24,8 +24,15 @@ namespace lab {
             void deposit(float amount) override;
             void withdraw(float amount) override;
 
+            friend class ATM_io;
+
             ~ATM_reports() override;
         private:
+            static ATM* load_text(std::ifstream& in);
+            void save_text(std::ofstream& out) override;
+            static ATM* load_bin(std::ifstream& in);
+            void save_bin(std::ofstream& out) override;
+
             void write(std::ostream& out) override;
             void read(std::istream& in) override;
     };

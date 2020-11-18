@@ -1,5 +1,6 @@
 #include <lab/atm/kinds/atm_fields.hpp>
 #include <iostream>
+#include <cstring>
 
 lab::ATM_fields::ATM_fields(const lab::ATM_fields& atm)
         :ATM(atm) {
@@ -64,4 +65,79 @@ void lab::ATM_fields::read(std::istream& in) {
 
     std::cout << "Input max withdraw sum:" << std::endl;
     in >> *this->m_max_withdraw;
+}
+
+lab::ATM* lab::ATM_fields::load_text(std::ifstream& in) {
+    common::string id;
+    common::string bankname;
+    common::string location;
+    float max_withdraw;
+    float balance;
+
+    in >> id;
+    in >> bankname;
+    in >> location;
+    in >> max_withdraw;
+    in >> balance;
+
+    return new ATM_fields(id, bankname, location, max_withdraw, balance);
+}
+
+void lab::ATM_fields::save_text(std::ofstream& out) {
+    out << this->id() << ' ';
+    out << this->bankname() << ' ';
+    out << this->location() << ' ';
+    out << this->max_withdraw() << ' ';
+    out << this->balance();
+
+    out << std::endl;
+}
+
+lab::ATM* lab::ATM_fields::load_bin(std::ifstream& in) {
+    size_t id_length = 0;
+    size_t bankname_length = 0;
+    size_t location_length = 0;
+    float balance;
+    float max_withdraw;
+
+    in.read(reinterpret_cast<char*>(&id_length), sizeof(size_t));
+    char* id = new char[id_length + 1];
+    in.read(id, id_length);
+    id[id_length] = '\0';
+
+    in.read(reinterpret_cast<char*>(&bankname_length), sizeof(size_t));
+    char* bankname = new char[bankname_length + 1];
+    in.read(bankname, bankname_length);
+    bankname[bankname_length] = '\0';
+
+    in.read(reinterpret_cast<char*>(&location_length), sizeof(size_t));
+    char* location = new char[location_length + 1];
+    in.read(location, location_length);
+    location[location_length] = '\0';
+
+    in.read(reinterpret_cast<char*>(&max_withdraw), sizeof(float));
+    in.read(reinterpret_cast<char*>(&balance), sizeof(float));
+
+    return new ATM_fields(id, bankname, location, max_withdraw, balance);
+}
+
+void lab::ATM_fields::save_bin(std::ofstream& out) {
+    size_t id_length = strlen(this->id());
+    size_t bankname_length = strlen(this->bankname());
+    size_t location_length = strlen(this->location());
+
+    float max_withdraw = this->max_withdraw();
+    float balance = this->balance();
+
+    out.write(reinterpret_cast<const char*>(&id_length), sizeof(size_t));
+    out.write(this->id(), id_length);
+
+    out.write(reinterpret_cast<const char*>(&bankname_length), sizeof(size_t));
+    out.write(this->bankname(), bankname_length);
+
+    out.write(reinterpret_cast<const char*>(&location_length), sizeof(size_t));
+    out.write(this->location(), location_length);
+
+    out.write(reinterpret_cast<const char*>(&max_withdraw), sizeof(float));
+    out.write(reinterpret_cast<const char*>(&balance), sizeof(float));
 }

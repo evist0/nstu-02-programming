@@ -1,5 +1,6 @@
 #include <lab/atm/kinds/atm.hpp>
 #include <iostream>
+#include <cstring>
 
 size_t lab::ATM::atm_amount = 0;
 
@@ -129,4 +130,53 @@ std::ostream& lab::operator<<(std::ostream& out, lab::ATM& atm) {
     atm.write(out);
 
     return out;
+}
+
+lab::ATM* lab::ATM::load_text(std::ifstream& in) {
+    common::string id = "";
+    float max_withdraw = 0.f;
+    float balance = 0.f;
+
+    in >> id;
+    in >> max_withdraw;
+    in >> balance;
+
+    return new ATM(id, max_withdraw, balance);
+}
+
+void lab::ATM::save_text(std::ofstream& out) {
+    out << this->id() << ' ';
+    out << this->max_withdraw() << ' ';
+    out << this->balance() << ' ';
+
+    out << std::endl;
+}
+
+lab::ATM* lab::ATM::load_bin(std::ifstream& in) {
+    size_t id_length = 0;
+
+    float balance;
+    float max_withdraw;
+
+    in.read(reinterpret_cast<char*>(&id_length), sizeof(size_t));
+    char* id = new char[id_length + 1];
+    in.read(id, id_length);
+    id[id_length] = '\0';
+
+    in.read(reinterpret_cast<char*>(&max_withdraw), sizeof(float));
+    in.read(reinterpret_cast<char*>(&balance), sizeof(float));
+
+    return new ATM(id, max_withdraw, balance);
+}
+
+void lab::ATM::save_bin(std::ofstream& out) {
+    size_t id_length = strlen(this->id());
+    float max_withdraw = this->max_withdraw();
+    float balance = this->balance();
+
+    out.write(reinterpret_cast<const char*>(&id_length), sizeof(size_t));
+    out.write(this->id(), id_length);
+
+    out.write(reinterpret_cast<const char*>(&max_withdraw), sizeof(float));
+    out.write(reinterpret_cast<const char*>(&balance), sizeof(float));
 }

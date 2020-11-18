@@ -2,6 +2,7 @@
 #define ATM_H
 #include <iosfwd>
 #include <fstream>
+#include <lab/atm/atm_io.hpp>
 #include <common/string.hpp>
 
 namespace lab {
@@ -26,6 +27,8 @@ namespace lab {
             friend std::istream& operator>>(std::istream& in, ATM& atm);
             friend std::ostream& operator<<(std::ostream& out, ATM& atm);
 
+            friend class ATM_io;
+
             virtual ~ATM();
         protected:
             static size_t atm_amount;
@@ -33,6 +36,11 @@ namespace lab {
             float* m_max_withdraw;
             float* m_balance;
         private:
+            static ATM* load_text(std::ifstream& in);
+            virtual void save_text(std::ofstream& out);
+            static ATM* load_bin(std::ifstream& in);
+            virtual void save_bin(std::ofstream& out);
+
             virtual void write(std::ostream& out);
             virtual void read(std::istream& in);
     };

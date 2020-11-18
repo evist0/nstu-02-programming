@@ -18,7 +18,13 @@ namespace lab {
             const char* bankname();
             const char* location();
 
+            friend class ATM_io;
         private:
+            static ATM* load_text(std::ifstream& in);
+            void save_text(std::ofstream& out) override;
+            static ATM* load_bin(std::ifstream& in);
+            void save_bin(std::ofstream& out) override;
+
             common::string* m_bankname;
             common::string* m_location;
             void write(std::ostream &out) override;

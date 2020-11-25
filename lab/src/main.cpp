@@ -17,12 +17,17 @@ lab::ATM* select_atm(size_t listIndex) {
 
 lab::ATM_reports* select_reports_atm(size_t relativeIndex) {
     auto atm_iterator = container.begin();
+
     size_t i = 0;
-    while (i != relativeIndex - 1) {
+
+    while (i != relativeIndex) {
         if (dynamic_cast<lab::ATM_reports*>(*atm_iterator)) {
             ++i;
         }
-        atm_iterator++;
+
+        if (i != relativeIndex) {
+            atm_iterator++;
+        }
     }
 
     return dynamic_cast<lab::ATM_reports*>(*atm_iterator);

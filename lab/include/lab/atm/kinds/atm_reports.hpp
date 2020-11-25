@@ -1,15 +1,15 @@
 #ifndef ATM_REPORTS_H
 #define ATM_REPORTS_H
 #include <chrono>
-#include <vector>
 #include <common/string.hpp>
+#include <common/vector.hpp>
 #include <lab/atm/kinds/atm.hpp>
 #include <lab/atm/report.hpp>
 
 namespace lab {
     class ATM_reports : public ATM {
         public:
-            std::vector<Report> reports;
+            common::Vector<Report> reports;
 
             ATM_reports(const lab::ATM_reports& atm);
 

@@ -1,20 +1,22 @@
-#include <sstream>
 #include <lab/atm/kinds/atm_reports.hpp>
+#include <sstream>
 #include <iostream>
-#include <lab/atm/atm_type.hpp>
 #include <cstring>
 
 lab::ATM_reports::ATM_reports(const lab::ATM_reports& atm) {
-    this->reports = std::vector<Report>();
-    this->reports.emplace_back(Action::Enabled, std::chrono::system_clock::now(), 0);
+    this->reports = common::Vector<Report>();
+
+    lab::Report report = Report(Action::Enabled, std::chrono::system_clock::now(), 0);
+    this->reports.push_back(report);
 }
 
 lab::ATM_reports::ATM_reports(const common::string& id, float max_withdraw, float initial_balance, bool loaded)
         :ATM(id, max_withdraw, initial_balance) {
-    this->reports = std::vector<Report>();
+    this->reports = common::Vector<Report>();
 
     if (!loaded) {
-        this->reports.emplace_back(Action::Enabled, std::chrono::system_clock::now(), 0);
+        lab::Report report = Report(Action::Enabled, std::chrono::system_clock::now(), 0);
+        this->reports.push_back(report);
     }
 }
 
@@ -25,16 +27,15 @@ lab::ATM_reports& lab::ATM_reports::operator=(const lab::ATM_reports& other) {
 }
 
 size_t lab::ATM_reports::reports_amount() const {
-    return reports.size();
+    return reports.length();
 }
 
 common::string lab::ATM_reports::log() {
     std::stringstream ss;
-    auto iterator = this->reports.begin();
 
-    for (; iterator != this->reports.end(); iterator++) {
-        if (iterator->is_today()) {
-            ss << *iterator;
+    for (size_t i = 0; i < this->reports_amount(); i++) {
+        if (this->reports[i].is_today()) {
+            ss << this->reports[i];
         }
     }
 
@@ -62,17 +63,22 @@ void lab::ATM_reports::read(std::istream& in) {
 }
 
 lab::ATM_reports::~ATM_reports() {
-    this->reports.emplace_back(Action::Disabled, std::chrono::system_clock::now(), 0);
+    lab::Report report = Report(Action::Disabled, std::chrono::system_clock::now(), 0);
+    this->reports.push_back(report);
 }
 
 void lab::ATM_reports::deposit(float amount) {
     ATM::deposit(amount);
-    this->reports.emplace_back(Action::Deposit, std::chrono::system_clock::now(), amount);
+
+    lab::Report report = Report(Action::Deposit, std::chrono::system_clock::now(), amount);
+    this->reports.push_back(report);
 }
 
 void lab::ATM_reports::withdraw(float amount) {
     ATM::withdraw(amount);
-    this->reports.emplace_back(Action::Withdraw, std::chrono::system_clock::now(), amount);
+
+    lab::Report report = Report(Action::Withdraw, std::chrono::system_clock::now(), amount);
+    this->reports.push_back(report);
 }
 
 lab::ATM* lab::ATM_reports::load_text(std::ifstream& in) {

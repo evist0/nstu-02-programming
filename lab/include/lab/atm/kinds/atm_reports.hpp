@@ -2,14 +2,14 @@
 #define ATM_REPORTS_H
 #include <chrono>
 #include <common/string.hpp>
-#include <common/vector.hpp>
 #include <lab/atm/kinds/atm.hpp>
 #include <lab/atm/report.hpp>
+#include <lab/atm/report_container.h>
 
 namespace lab {
     class ATM_reports : public ATM {
         public:
-            common::Vector<Report> reports;
+            Report_Container reports;
 
             ATM_reports(const lab::ATM_reports& atm);
 

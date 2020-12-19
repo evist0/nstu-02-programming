@@ -90,3 +90,5 @@ lab::Report lab::Report::from_text(std::ifstream& in) {
 
     return { type, std::chrono::system_clock::time_point(std::chrono::seconds(time)), sum };
 }
+
+lab::Report::Report() = default;

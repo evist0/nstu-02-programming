@@ -4,7 +4,7 @@
 #include <cstring>
 
 lab::ATM_reports::ATM_reports(const lab::ATM_reports& atm) {
-    this->reports = common::Vector<Report>();
+    this->reports = Report_Container();
 
     lab::Report report = Report(Action::Enabled, std::chrono::system_clock::now(), 0);
     this->reports.push_back(report);
@@ -12,7 +12,8 @@ lab::ATM_reports::ATM_reports(const lab::ATM_reports& atm) {
 
 lab::ATM_reports::ATM_reports(const common::string& id, float max_withdraw, float initial_balance, bool loaded)
         :ATM(id, max_withdraw, initial_balance) {
-    this->reports = common::Vector<Report>();
+    this->reports = Report_Container();
+
 
     if (!loaded) {
         lab::Report report = Report(Action::Enabled, std::chrono::system_clock::now(), 0);

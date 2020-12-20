@@ -8,7 +8,7 @@
 namespace lab {
     class Tree {
         public:
-            Tree();
+            Tree() noexcept;
             ~Tree();
 
             TreeIterator begin();
@@ -20,7 +20,7 @@ namespace lab {
             void clear();
 
         private:
-            static void destroy_tree(Node* leaf);
+            static void destroy_tree(Node*& leaf);
             static void insert(ATM* atm, Node* leaf);
             static Node* search(const common::string& id, Node* leaf);
 

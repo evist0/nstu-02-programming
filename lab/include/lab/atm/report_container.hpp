@@ -6,6 +6,8 @@ namespace lab {
     class Report_Container {
         public:
             Report_Container();
+            Report_Container(const Report_Container& rhs) = delete;
+            Report_Container& operator=(const Report_Container& rhs) = delete;
             Report& operator[](int);
             size_t length() const;
             size_t capacity() const;

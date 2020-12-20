@@ -1,6 +1,6 @@
 #include <lab/tree/tree.hpp>
 
-lab::Tree::Tree()
+lab::Tree::Tree() noexcept
         :root(nullptr) {
 }
 
@@ -40,11 +40,12 @@ lab::Tree::~Tree() {
     destroy_tree(root);
 }
 
-void lab::Tree::destroy_tree(lab::Node* leaf) {
+void lab::Tree::destroy_tree(lab::Node*& leaf) {
     if (leaf != nullptr) {
         destroy_tree(leaf->left);
         destroy_tree(leaf->right);
         delete leaf;
+        leaf = nullptr;
     }
 }
 

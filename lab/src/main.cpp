@@ -32,11 +32,16 @@ lab::ATM_reports* select_reports_atm(size_t relativeIndex) {
 void print_atms() {
     auto atm_iterator = container.begin();
 
-    size_t i = 0;
-    while (atm_iterator.hasNext()) {
-        std::cout << ++i << ". " << *atm_iterator << std::endl;
-        atm_iterator.next();
+    if (container.empty()) {
+        std::cout << "Список пуст!" << std::endl;
+        return;
     }
+
+    size_t i = 0;
+    do {
+        std::cout << ++i << ". " << **atm_iterator << std::endl;
+        atm_iterator.next();
+    } while (atm_iterator.hasNext());
 }
 
 void copy_atm() {
@@ -186,7 +191,9 @@ void create_atm() {
 
         else if (action_id == 4) {
             selected = true;
-            copy_atm();
+            if (!container.empty()) {
+                copy_atm();
+            }
         }
 
         else if (action_id == 5) {
@@ -278,10 +285,10 @@ void save_text() {
     }
 
     auto atm_iterator = container.begin();
-    while (atm_iterator.hasNext()) {
+    do {
         lab::ATM_io::save_text(out, *atm_iterator);
         atm_iterator.next();
-    }
+    } while (atm_iterator.hasNext());
 
     out.close();
 }
@@ -294,10 +301,10 @@ void save_bin() {
     }
 
     auto atm_iterator = container.begin();
-    while (atm_iterator.hasNext()) {
+    do  {
         lab::ATM_io::save_bin(out, *atm_iterator);
         atm_iterator.next();
-    }
+    } while(atm_iterator.hasNext());
 
     out.close();
 }
@@ -434,12 +441,12 @@ void view_reports() {
 
     auto atm_iterator = container.begin();
     size_t i = 0;
-    while (atm_iterator.hasNext()) {
+    do {
         if (auto casted = dynamic_cast<lab::ATM_reports*>(*atm_iterator)) {
             std::cout << ++i << ". " << *casted << std::endl;
         }
         atm_iterator.next();
-    }
+    } while (atm_iterator.hasNext());
 
     size_t relativeIndex = 0;
 

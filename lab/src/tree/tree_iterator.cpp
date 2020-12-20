@@ -15,17 +15,23 @@ void lab::TreeIterator::fillStack(lab::Node* node) {
 }
 
 void lab::TreeIterator::next() {
-    Node* current = st.top();
-    st.pop();
+    if (!st.empty()) {
+        Node* current = st.top();
+        st.pop();
 
-    if (current != nullptr) {
-        fillStack(current->right);
+        if (current != nullptr) {
+            fillStack(current->right);
+        }
+
+        value = current->value;
+
+        return;
     }
 
-    value = current->value;
+    value = nullptr;
 }
 
-bool lab::TreeIterator::hasNext() {
+bool lab::TreeIterator::hasNext() const {
     return !st.empty();
 }
 

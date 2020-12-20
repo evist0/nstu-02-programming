@@ -13,7 +13,7 @@ namespace lab {
             void fillStack(Node* node);
 
             void next();
-            bool hasNext();
+            bool hasNext() const;
 
             ATM* operator*();
         private:

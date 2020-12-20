@@ -1,5 +1,5 @@
-#ifndef OOP_LABS_REPORT_CONTAINER_H
-#define OOP_LABS_REPORT_CONTAINER_H
+#ifndef OOP_LABS_REPORT_CONTAINER_HPP
+#define OOP_LABS_REPORT_CONTAINER_HPP
 #include <lab/atm/report.hpp>
 
 namespace lab {
@@ -20,4 +20,4 @@ namespace lab {
     };
 }
 
-#endif //OOP_LABS_REPORT_CONTAINER_H
+#endif //OOP_LABS_REPORT_CONTAINER_HPP

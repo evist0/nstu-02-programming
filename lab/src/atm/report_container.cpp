@@ -1,4 +1,4 @@
-#include <lab/atm/report_container.h>
+#include <lab/atm/report_container.hpp>
 
 lab::Report_Container::Report_Container()
         :m_container(new Report[4]), m_length(0), m_capacity(4) {

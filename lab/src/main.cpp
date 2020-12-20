@@ -5,15 +5,11 @@
 #include <lab/atm/kinds/atm.hpp>
 #include <lab/atm/kinds/atm_fields.hpp>
 #include <lab/atm/kinds/atm_reports.hpp>
-#include <lab/atm/atm_io.hpp>
+#include <lab/tree/tree.hpp>
 
 bool isMenu = true;
 
-auto container = std::vector<lab::ATM*>();
-
-lab::ATM* select_atm(size_t listIndex) {
-    return container[listIndex - 1];
-}
+auto container = lab::Tree();
 
 lab::ATM_reports* select_reports_atm(size_t relativeIndex) {
     auto atm_iterator = container.begin();
@@ -26,7 +22,7 @@ lab::ATM_reports* select_reports_atm(size_t relativeIndex) {
         }
 
         if (i != relativeIndex) {
-            atm_iterator++;
+            atm_iterator.next();
         }
     }
 
@@ -35,23 +31,25 @@ lab::ATM_reports* select_reports_atm(size_t relativeIndex) {
 
 void print_atms() {
     auto atm_iterator = container.begin();
+
     size_t i = 0;
-    for (; atm_iterator != container.end(); atm_iterator++) {
-        std::cout << ++i << ". " << **atm_iterator << std::endl;
+    while (atm_iterator.hasNext()) {
+        std::cout << ++i << ". " << *atm_iterator << std::endl;
+        atm_iterator.next();
     }
 }
 
 void copy_atm() {
     print_atms();
 
-    size_t listIndex;
+    common::string id;
 
-    std::cout << "Введите номер банкомата в списке, который будет скопирован:" << std::endl;
-    std::cin >> listIndex;
+    std::cout << "Введите ID банкомата, который будет скопирован:" << std::endl;
+    std::cin >> id;
 
-    lab::ATM* atmToCopy = select_atm(listIndex);
+    lab::ATM* atmToCopy = container.search(id);
 
-    container.emplace_back(atmToCopy);
+    container.insert(atmToCopy);
 }
 
 void create_atm_constructor(lab::ATM_type type) {
@@ -76,17 +74,17 @@ void create_atm_constructor(lab::ATM_type type) {
 
             if (type == lab::ATM_type::Base) {
                 auto atm = new lab::ATM();
-                container.push_back(atm);
+                container.insert(atm);
             }
 
             else if (type == lab::ATM_type::Fields) {
                 auto atm = new lab::ATM_fields();
-                container.push_back(atm);
+                container.insert(atm);
             }
 
             else if (type == lab::ATM_type::Reports) {
                 auto atm = new lab::ATM_reports();
-                container.push_back(atm);
+                container.insert(atm);
             }
         }
 
@@ -104,7 +102,7 @@ void create_atm_constructor(lab::ATM_type type) {
                 std::cin >> balance;
 
                 auto atm = new lab::ATM(id, max_widthdraw, balance);
-                container.push_back(atm);
+                container.insert(atm);
             }
 
             else if (type == lab::ATM_type::Fields) {
@@ -124,7 +122,7 @@ void create_atm_constructor(lab::ATM_type type) {
                 std::cin >> balance;
 
                 auto atm = new lab::ATM_fields(id, bankname, location, max_widthdraw, balance);
-                container.push_back(atm);
+                container.insert(atm);
             }
 
             else if (type == lab::ATM_type::Reports) {
@@ -138,7 +136,7 @@ void create_atm_constructor(lab::ATM_type type) {
                 std::cin >> balance;
 
                 auto atm = new lab::ATM_reports(id, max_widthdraw, balance);
-                container.push_back(atm);
+                container.insert(atm);
             }
         }
 
@@ -209,12 +207,12 @@ void modify_atm() {
 
     print_atms();
 
-    size_t listIndex;
+    common::string id;
 
-    std::cout << "Введите номер банкомата в списке, который будет модифицирован:" << std::endl;
-    std::cin >> listIndex;
+    std::cout << "Введите ID банкомата, который будет модифицирован:" << std::endl;
+    std::cin >> id;
 
-    auto atm = select_atm(listIndex);
+    auto atm = container.search(id);
 
     bool selected = false;
 
@@ -264,14 +262,12 @@ void modify_atm() {
 void delete_atm() {
     print_atms();
 
-    size_t listIndex;
+    common::string id;
 
-    std::cout << "Введите номер банкомата в списке, который будет удалён:" << std::endl;
-    std::cin >> listIndex;
+    std::cout << "Введите ID банкомата, который будет удалён:" << std::endl;
+    std::cin >> id;
 
-    auto ptr = container.cbegin() + listIndex - 1;
-
-    container.erase(ptr);
+    container.erase(id);
 }
 
 void save_text() {
@@ -282,8 +278,9 @@ void save_text() {
     }
 
     auto atm_iterator = container.begin();
-    for (; atm_iterator != container.end(); atm_iterator++) {
+    while (atm_iterator.hasNext()) {
         lab::ATM_io::save_text(out, *atm_iterator);
+        atm_iterator.next();
     }
 
     out.close();
@@ -297,8 +294,9 @@ void save_bin() {
     }
 
     auto atm_iterator = container.begin();
-    for (; atm_iterator != container.end(); atm_iterator++) {
+    while (atm_iterator.hasNext()) {
         lab::ATM_io::save_bin(out, *atm_iterator);
+        atm_iterator.next();
     }
 
     out.close();
@@ -344,9 +342,6 @@ void save_atms() {
 }
 
 void clear() {
-    for (auto ptr : container)
-        delete ptr;
-
     container.clear();
 }
 
@@ -363,7 +358,7 @@ void load_text() {
         auto atm = lab::ATM_io::load_text(in);
 
         if (atm != nullptr) {
-            container.push_back(atm);
+            container.insert(atm);
         }
         else {
             in.close();
@@ -384,7 +379,7 @@ void load_bin() {
         auto atm = lab::ATM_io::load_bin(in);
 
         if (atm != nullptr) {
-            container.push_back(atm);
+            container.insert(atm);
         }
         else {
             in.close();
@@ -439,11 +434,11 @@ void view_reports() {
 
     auto atm_iterator = container.begin();
     size_t i = 0;
-    while (atm_iterator != container.end()) {
+    while (atm_iterator.hasNext()) {
         if (auto casted = dynamic_cast<lab::ATM_reports*>(*atm_iterator)) {
             std::cout << ++i << ". " << *casted << std::endl;
         }
-        atm_iterator++;
+        atm_iterator.next();
     }
 
     size_t relativeIndex = 0;

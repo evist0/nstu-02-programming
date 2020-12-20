@@ -4,7 +4,7 @@
 #include <common/string.hpp>
 #include <lab/atm/kinds/atm.hpp>
 #include <lab/atm/report.hpp>
-#include <lab/atm/report_container.h>
+#include <lab/atm/report_container.hpp>
 
 namespace lab {
     class ATM_reports : public ATM {

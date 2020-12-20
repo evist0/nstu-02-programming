@@ -6,13 +6,19 @@ add_library(lab_lib
         include/lab/atm/kinds/atm_reports.hpp
         include/lab/atm/atm_type.hpp
         include/lab/atm/atm_io.hpp
-        include/lab/atm/report_container.h
+        include/lab/atm/report_container.hpp
+        include/lab/tree/tree.hpp
+        include/lab/tree/node.hpp
+        include/lab/tree/tree_iterator.hpp
         src/atm/kinds/atm.cpp
         src/atm/kinds/atm_fields.cpp
         src/atm/report.cpp
         src/atm/kinds/atm_reports.cpp
         src/atm/atm_io.cpp
-        src/atm/report_container.cpp)
+        src/atm/report_container.cpp
+        src/tree/tree.cpp
+        src/tree/node.cpp
+        src/tree/tree_iterator.cpp)
 target_link_libraries(lab_lib PUBLIC common)
 target_include_directories(lab_lib PUBLIC include)
 

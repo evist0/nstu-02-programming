@@ -38,10 +38,10 @@ void print_atms() {
     }
 
     size_t i = 0;
-    do {
-        std::cout << ++i << ". " << **atm_iterator << std::endl;
+    while (atm_iterator.hasNext()) {
         atm_iterator.next();
-    } while (atm_iterator.hasNext());
+        std::cout << ++i << ". " << **atm_iterator << std::endl;
+    }
 }
 
 void copy_atm() {
@@ -285,10 +285,10 @@ void save_text() {
     }
 
     auto atm_iterator = container.begin();
-    do {
-        lab::ATM_io::save_text(out, *atm_iterator);
+    while (atm_iterator.hasNext()) {
         atm_iterator.next();
-    } while (atm_iterator.hasNext());
+        lab::ATM_io::save_text(out, *atm_iterator);
+    }
 
     out.close();
 }
@@ -301,10 +301,10 @@ void save_bin() {
     }
 
     auto atm_iterator = container.begin();
-    do  {
-        lab::ATM_io::save_bin(out, *atm_iterator);
+    while (atm_iterator.hasNext()) {
         atm_iterator.next();
-    } while(atm_iterator.hasNext());
+        lab::ATM_io::save_bin(out, *atm_iterator);
+    }
 
     out.close();
 }
@@ -441,12 +441,12 @@ void view_reports() {
 
     auto atm_iterator = container.begin();
     size_t i = 0;
-    do {
+    while (atm_iterator.hasNext()) {
+        atm_iterator.next();
         if (auto casted = dynamic_cast<lab::ATM_reports*>(*atm_iterator)) {
             std::cout << ++i << ". " << *casted << std::endl;
         }
-        atm_iterator.next();
-    } while (atm_iterator.hasNext());
+    };
 
     size_t relativeIndex = 0;
 

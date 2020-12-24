@@ -1,7 +1,7 @@
 #include <lab/tree/tree_iterator.hpp>
 
-lab::TreeIterator::TreeIterator(lab::Node* root) {
-    value = nullptr;
+lab::TreeIterator::TreeIterator(lab::Node* root)
+        :value(nullptr), st() {
     fillStack(root);
 }
 
@@ -10,12 +10,10 @@ void lab::TreeIterator::fillStack(lab::Node* node) {
         st.push(node);
         node = node->left;
     }
-
-    next();
 }
 
 void lab::TreeIterator::next() {
-    if (!st.empty()) {
+    if (!st.is_empty()) {
         Node* current = st.top();
         st.pop();
 
@@ -32,7 +30,7 @@ void lab::TreeIterator::next() {
 }
 
 bool lab::TreeIterator::hasNext() const {
-    return !st.empty();
+    return !st.is_empty();
 }
 
 lab::ATM* lab::TreeIterator::operator*() {

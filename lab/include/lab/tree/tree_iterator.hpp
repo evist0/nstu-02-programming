@@ -1,13 +1,13 @@
 #ifndef OOP_LABS_TREE_ITERATOR_HPP
 #define OOP_LABS_TREE_ITERATOR_HPP
 
-#include <stack>
+#include <common/stack.hpp>
 #include "node.hpp"
 
 namespace lab {
     class TreeIterator {
         public:
-            std::stack<Node*> st;
+            Stack<Node*> st;
             TreeIterator(Node* root);
 
             void fillStack(Node* node);

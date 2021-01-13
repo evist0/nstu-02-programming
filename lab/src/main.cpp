@@ -1,60 +1,117 @@
 #include <iostream>
-#include <vector>
-#include <sstream>
+#include <memory>
+#include <lab/tree/tree.hpp>
 #include <lab/atm/atm_type.hpp>
-#include <lab/atm/kinds/atm.hpp>
 #include <lab/atm/kinds/atm_fields.hpp>
 #include <lab/atm/kinds/atm_reports.hpp>
-#include <lab/tree/tree.hpp>
+
+auto int_tree = lab::Tree<int>();
+
+auto float_tree = lab::Tree<float>();
+
+auto atm_tree = lab::Tree<lab::ATM*>();
+
+short selected_tree = 0;
 
 bool isMenu = true;
 
-auto container = lab::Tree();
+void switch_tree() {
+    bool selected = false;
 
-lab::ATM_reports* select_reports_atm(size_t relativeIndex) {
-    auto atm_iterator = container.begin();
+    while (!selected) {
+        std::cout << "Выберите новый тип дерева: " << std::endl;
 
-    size_t i = 0;
+        std::cout << "1. Целочисленный" << std::endl;
+        std::cout << "2. С плавающей запятой" << std::endl;
+        std::cout << "3. С банкоматами" << std::endl;
 
-    while (i != relativeIndex) {
-        if (dynamic_cast<lab::ATM_reports*>(*atm_iterator)) {
-            ++i;
+        std::cout << std::endl;
+
+        std::cout << "4.Назад" << std::endl;
+
+        int action_id = 0;
+
+        std::cin >> action_id;
+
+        if (action_id == 1) {
+            selected = true;
+            selected_tree = 0;
         }
 
-        if (i != relativeIndex) {
-            atm_iterator.next();
+        else if (action_id == 2) {
+            selected = true;
+            selected_tree = 1;
+        }
+
+        else if (action_id == 3) {
+            selected = true;
+            selected_tree = 2;
+        }
+
+        else if (action_id == 4) {
+            selected = true;
+        }
+
+        else {
+            std::cout << "Неизвестная команда";
         }
     }
-
-    return dynamic_cast<lab::ATM_reports*>(*atm_iterator);
 }
 
-void print_atms() {
-    auto atm_iterator = container.begin();
+void print() {
+    if (selected_tree == 0) {
+        if (int_tree.empty()) {
+            std::cout << "Список пуст!" << std::endl;
+            return;
+        }
 
-    if (container.empty()) {
-        std::cout << "Список пуст!" << std::endl;
-        return;
+        auto iterator = int_tree.begin();
+
+        while (iterator.hasNext()) {
+            iterator.next();
+            std::cout << *iterator << std::endl;
+        }
     }
+    else if (selected_tree == 1) {
+        if (float_tree.empty()) {
+            std::cout << "Список пуст!" << std::endl;
+            return;
+        }
 
-    size_t i = 0;
-    while (atm_iterator.hasNext()) {
-        atm_iterator.next();
-        std::cout << ++i << ". " << **atm_iterator << std::endl;
+        auto iterator = float_tree.begin();
+
+        while (iterator.hasNext()) {
+            iterator.next();
+            std::cout << *iterator << std::endl;
+        }
+    }
+    else if (selected_tree == 2) {
+        if (atm_tree.empty()) {
+            std::cout << "Список пуст!" << std::endl;
+            return;
+        }
+
+        auto atm_iterator = atm_tree.begin();
+
+        size_t i = 0;
+        while (atm_iterator.hasNext()) {
+            atm_iterator.next();
+            std::cout << ++i << ". " << **atm_iterator << std::endl;
+        }
     }
 }
 
 void copy_atm() {
-    print_atms();
+    print();
 
     common::string id;
 
     std::cout << "Введите ID банкомата, который будет скопирован:" << std::endl;
     std::cin >> id;
 
-    lab::ATM* atmToCopy = container.search(id);
+    lab::ATM** atmToCopy = atm_tree.search(id);
 
-    container.insert(atmToCopy);
+    atm_tree.insert(*atmToCopy);
 }
 
 void create_atm_constructor(lab::ATM_type type) {
@@ -79,17 +136,17 @@ void create_atm_constructor(lab::ATM_type type) {
 
             if (type == lab::ATM_type::Base) {
                 auto atm = new lab::ATM();
-                container.insert(atm);
+                atm_tree.insert(atm);
             }
 
             else if (type == lab::ATM_type::Fields) {
                 auto atm = new lab::ATM_fields();
-                container.insert(atm);
+                atm_tree.insert(atm);
             }
 
             else if (type == lab::ATM_type::Reports) {
                 auto atm = new lab::ATM_reports();
-                container.insert(atm);
+                atm_tree.insert(atm);
             }
         }
 
@@ -107,7 +164,7 @@ void create_atm_constructor(lab::ATM_type type) {
                 std::cin >> balance;
 
                 auto atm = new lab::ATM(id, max_widthdraw, balance);
-                container.insert(atm);
+                atm_tree.insert(atm);
             }
 
             else if (type == lab::ATM_type::Fields) {
@@ -127,7 +184,7 @@ void create_atm_constructor(lab::ATM_type type) {
                 std::cin >> balance;
 
                 auto atm = new lab::ATM_fields(id, bankname, location, max_widthdraw, balance);
-                container.insert(atm);
+                atm_tree.insert(atm);
             }
 
             else if (type == lab::ATM_type::Reports) {
@@ -141,7 +198,7 @@ void create_atm_constructor(lab::ATM_type type) {
                 std::cin >> balance;
 
                 auto atm = new lab::ATM_reports(id, max_widthdraw, balance);
-                container.insert(atm);
+                atm_tree.insert(atm);
             }
         }
 
@@ -191,7 +248,7 @@ void create_atm() {
 
         else if (action_id == 4) {
             selected = true;
-            if (!container.empty()) {
+            if (!atm_tree.empty()) {
                 copy_atm();
             }
         }
@@ -206,256 +263,74 @@ void create_atm() {
     }
 }
 
-void modify_atm() {
-    if (container.empty()) {
-        std::cout << "Контейнер пуст!" << std::endl;
-        return;
+void add_to_tree() {
+    if (selected_tree == 0) {
+        int input;
+        std::cin >> input;
+
+        int_tree.insert(input);
     }
+    else if (selected_tree == 1) {
+        float input;
+        std::cin >> input;
 
-    print_atms();
-
-    common::string id;
-
-    std::cout << "Введите ID банкомата, который будет модифицирован:" << std::endl;
-    std::cin >> id;
-
-    auto atm = container.search(id);
-
-    bool selected = false;
-
-    while (!selected) {
-        std::cout << "Выберите действие: " << std::endl;
-
-        std::cout << "1. Положить деньги" << std::endl;
-        std::cout << "2. Снять деньги" << std::endl;
-
-        std::cout << std::endl;
-
-        std::cout << "3.Назад" << std::endl;
-
-        int action_id = 0;
-
-        std::cin >> action_id;
-
-        float sum;
-
-        switch (action_id) {
-        case 1:
-            selected = true;
-
-            std::cout << "Введите сумму: ";
-            std::cin >> sum;
-
-            *atm = *atm + sum;
-            break;
-        case 2:
-            selected = true;
-
-            std::cout << "Введите сумму: ";
-            std::cin >> sum;
-
-            *atm = *atm - sum;
-            break;
-        case 3:
-            selected = true;
-            break;
-        default:
-            std::cout << "Неизвестная команда";
-            break;
-        }
+        float_tree.insert(input);
+    }
+    else if (selected_tree == 2) {
+        create_atm();
     }
 }
 
-void delete_atm() {
-    print_atms();
+void erase_from_tree() {
+    if (selected_tree == 0) {
+        int input;
+        std::cin >> input;
 
-    common::string id;
-
-    std::cout << "Введите ID банкомата, который будет удалён:" << std::endl;
-    std::cin >> id;
-
-    container.erase(id);
-}
-
-void save_text() {
-    std::ofstream out("ATMs.txt", std::ios::out);
-
-    if (!out) {
-        throw std::runtime_error("Невозможно открыть файл");
+        int_tree.erase(input);
     }
+    else if (selected_tree == 1) {
+        float input;
+        std::cin >> input;
 
-    auto atm_iterator = container.begin();
-    while (atm_iterator.hasNext()) {
-        atm_iterator.next();
-        lab::ATM_io::save_text(out, *atm_iterator);
+        float_tree.erase(input);
     }
+    else if (selected_tree == 2) {
+        common::string id;
+        std::cin >> id;
 
-    out.close();
-}
-
-void save_bin() {
-    std::ofstream out("ATMs.bin", std::ios::out | std::ios::binary);
-
-    if (!out) {
-        throw std::runtime_error("Невозможно открыть файл");
-    }
-
-    auto atm_iterator = container.begin();
-    while (atm_iterator.hasNext()) {
-        atm_iterator.next();
-        lab::ATM_io::save_bin(out, *atm_iterator);
-    }
-
-    out.close();
-}
-
-void save_atms() {
-    bool selected = false;
-
-    while (!selected) {
-        std::cout << "Выберите способ: " << std::endl;
-
-        std::cout << "1. В текстовый файл (ATMs.txt)" << std::endl;
-        std::cout << "2. В бинарный файл (ATMs.bin)" << std::endl;
-
-        std::cout << std::endl;
-
-        std::cout << "3.Назад" << std::endl;
-
-        int action_id = 0;
-
-        std::cin >> action_id;
-
-        switch (action_id) {
-        case 1:
-            selected = true;
-
-            save_text();
-            break;
-        case 2:
-            selected = true;
-
-            save_bin();
-            break;
-        case 3:
-            selected = true;
-
-            break;
-        default:
-            std::cout << "Неизвестная команда";
-            break;
-        }
+        atm_tree.erase(id);
     }
 }
 
-void clear() {
-    container.clear();
-}
-
-void load_text() {
-    clear();
-
-    std::ifstream in("ATMs.txt", std::ios::in);
-
-    if (!in) {
-        throw std::runtime_error("Невозможно открыть файл");
+void save_tree() {
+    if (selected_tree == 0) {
+        std::ofstream out("int.bin", std::ios::out | std::ios::binary);
+        int_tree.write(out);
     }
-
-    while (in.is_open()) {
-        auto atm = lab::ATM_io::load_text(in);
-
-        if (atm != nullptr) {
-            container.insert(atm);
-        }
-        else {
-            in.close();
-        }
+    else if (selected_tree == 1) {
+        std::ofstream out("float.bin", std::ios::out | std::ios::binary);
+        float_tree.write(out);
+    }
+    else if (selected_tree == 2) {
+        std::ofstream out("ATMs.bin", std::ios::out | std::ios::binary);
+        atm_tree.write(out);
     }
 }
 
-void load_bin() {
-    clear();
+void load_tree() {
+    if (selected_tree == 0) {
+        std::ifstream in("int.bin", std::ios::out | std::ios::binary);
+        int_tree = lab::Tree<int>::read(in);
 
-    std::ifstream in("ATMs.bin", std::ios::in | std::ios::binary);
-
-    if (!in) {
-        throw std::runtime_error("Невозможно открыть файл");
     }
-
-    while (in.is_open()) {
-        auto atm = lab::ATM_io::load_bin(in);
-
-        if (atm != nullptr) {
-            container.insert(atm);
-        }
-        else {
-            in.close();
-        }
+    else if (selected_tree == 1) {
+        std::ifstream in("float.bin", std::ios::out | std::ios::binary);
+        float_tree = lab::Tree<float>::read(in);
     }
-}
-
-void load_atms() {
-    bool selected = false;
-
-    while (!selected) {
-        std::cout << "Выберите способ: " << std::endl;
-
-        std::cout << "1. Из текстового файла (ATMs.txt)" << std::endl;
-        std::cout << "2. Из бинарного файла (ATMs.bin)" << std::endl;
-
-        std::cout << std::endl;
-
-        std::cout << "3.Назад" << std::endl;
-
-        int action_id = 0;
-
-        std::cin >> action_id;
-
-        switch (action_id) {
-        case 1:
-            selected = true;
-
-            load_text();
-            break;
-        case 2:
-            selected = true;
-
-            load_bin();
-            break;
-        case 3:
-            selected = true;
-
-            break;
-        default:
-            std::cout << "Неизвестная команда";
-            break;
-        }
+    else if (selected_tree == 2) {
+        std::ifstream in("ATMs.bin", std::ios::out | std::ios::binary);
+        atm_tree = lab::Tree<lab::ATM*>::read(in);
     }
-}
-
-void view_reports() {
-    if (container.empty()) {
-        std::cout << "Контейнер пуст!" << std::endl;
-        return;
-    }
-
-    auto atm_iterator = container.begin();
-    size_t i = 0;
-    while (atm_iterator.hasNext()) {
-        atm_iterator.next();
-        if (auto casted = dynamic_cast<lab::ATM_reports*>(*atm_iterator)) {
-            std::cout << ++i << ". " << *casted << std::endl;
-        }
-    };
-
-    size_t relativeIndex = 0;
-
-    std::cout << "Введите номер банкомата: " << std::endl;
-    std::cin >> relativeIndex;
-
-    auto selected = select_reports_atm(relativeIndex);
-
-    std::cout << selected->log();
 }
 
 void menu() {
@@ -464,17 +339,16 @@ void menu() {
     while (!selected) {
         std::cout << "Выберите действие: " << std::endl;
 
-        std::cout << "1. Создать объект" << std::endl;
-        std::cout << "2. Модифицировать объект" << std::endl;
-        std::cout << "3. Удалить объект" << std::endl;
-        std::cout << "4. Вывести список объектов" << std::endl;
-        std::cout << "5. Сохранить объекты" << std::endl;
-        std::cout << "6. Загрузить объекты" << std::endl;
-        std::cout << "7. Посмотреть отчёты" << std::endl;
+        std::cout << "1. Заменить дерево" << std::endl;
+        std::cout << "2. Добавить в дерево" << std::endl;
+        std::cout << "3. Удалить объект из дерева" << std::endl;
+        std::cout << "4. Вывести дерево" << std::endl;
+        std::cout << "5. Сохранить дерево" << std::endl;
+        std::cout << "6. Загрузить дерево" << std::endl;
 
         std::cout << std::endl;
 
-        std::cout << "8.Выход" << std::endl;
+        std::cout << "7.Выход" << std::endl;
 
         int action_id = 0;
 
@@ -484,41 +358,35 @@ void menu() {
         case 1:
             selected = true;
 
-            create_atm();
+            switch_tree();
             break;
         case 2:
             selected = true;
 
-            modify_atm();
+            add_to_tree();
             break;
         case 3:
             selected = true;
 
-            delete_atm();
+            erase_from_tree();
             break;
         case 4:
             selected = true;
 
-            print_atms();
+            print();
             break;
         case 5:
             selected = true;
 
-            save_atms();
+            save_tree();
             break;
         case 6:
             selected = true;
 
-            load_atms();
+            load_tree();
             break;
         case 7:
             selected = true;
-
-            view_reports();
-            break;
-        case 8:
-            selected = true;
-            clear();
 
             isMenu = false;
             break;

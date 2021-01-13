@@ -23,6 +23,7 @@ namespace lab {
             friend ATM operator+(ATM& atm, float deposit_sum);
             friend bool operator==(ATM& atm, float check_sum);
             friend bool operator!=(ATM& atm, float check_sum);
+            friend bool operator<(ATM& lhs, ATM& rhs);
 
             friend std::istream& operator>>(std::istream& in, ATM& atm);
             friend std::ostream& operator<<(std::ostream& out, ATM& atm);

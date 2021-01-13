@@ -15,10 +15,7 @@ add_library(lab_lib
         src/atm/report.cpp
         src/atm/kinds/atm_reports.cpp
         src/atm/atm_io.cpp
-        src/atm/report_container.cpp
-        src/tree/tree.cpp
-        src/tree/node.cpp
-        src/tree/tree_iterator.cpp)
+        src/atm/report_container.cpp)
 target_link_libraries(lab_lib PUBLIC common)
 target_include_directories(lab_lib PUBLIC include)
 

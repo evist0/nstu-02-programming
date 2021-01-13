@@ -5,20 +5,57 @@
 #include "node.hpp"
 
 namespace lab {
-    class TreeIterator {
+    template<typename T> class TreeIterator {
         public:
-            Stack<Node*> st;
-            TreeIterator(Node* root);
+            Stack<Node<T>*> st;
+            TreeIterator(Node<T>* root);
 
-            void fillStack(Node* node);
+            void fillStack(Node<T>* node);
 
             void next();
             bool hasNext() const;
 
-            ATM* operator*();
+            T operator*();
         private:
-            ATM* value;
+            T value;
     };
+}
+
+template<typename T> lab::TreeIterator<T>::TreeIterator(lab::Node<T>* root)
+        :value(nullptr), st() {
+    fillStack(root);
+}
+
+template<typename T> void lab::TreeIterator<T>::fillStack(lab::Node<T>* node) {
+    while (node != nullptr) {
+        st.push(node);
+        node = node->left;
+    }
+}
+
+template<typename T> void lab::TreeIterator<T>::next() {
+    if (!st.is_empty()) {
+        Node<T>* current = st.top();
+        st.pop();
+
+        if (current != nullptr) {
+            fillStack(current->right);
+        }
+
+        value = current->value;
+
+        return;
+    }
+
+    value = nullptr;
+}
+
+template<typename T> bool lab::TreeIterator<T>::hasNext() const {
+    return !st.is_empty();
+}
+
+template<typename T> T lab::TreeIterator<T>::operator*() {
+    return value;
 }
 
 #endif //OOP_LABS_TREE_ITERATOR_HPP

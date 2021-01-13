@@ -93,6 +93,10 @@ bool operator!=(lab::ATM& atm, float check_sum) {
     return atm.balance() != check_sum;
 }
 
+bool lab::operator<(lab::ATM& lhs, lab::ATM& rhs) {
+    return lhs.id() < rhs.id();
+}
+
 lab::ATM::~ATM() {
     delete m_id;
     delete m_max_withdraw;
@@ -180,3 +184,5 @@ void lab::ATM::save_bin(std::ofstream& out) {
     out.write(reinterpret_cast<const char*>(&max_withdraw), sizeof(float));
     out.write(reinterpret_cast<const char*>(&balance), sizeof(float));
 }
+
+

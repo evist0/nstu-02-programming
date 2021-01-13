@@ -9,9 +9,12 @@ namespace lab {
     template<typename T> class Tree {
         public:
             Tree() noexcept;
+            Tree(const Tree<T>& other);
             ~Tree();
+            Tree<T>& operator=(const Tree<T>& other) noexcept;
 
             TreeIterator<T> begin();
+            TreeIterator<T> begin() const;
 
             void insert(T obj);
             T* search(const common::string& id);
@@ -36,6 +39,31 @@ namespace lab {
 
 template<typename T> lab::Tree<T>::Tree() noexcept
         :root(nullptr) {
+}
+
+template<typename T>
+lab::Tree<T>& lab::Tree<T>::operator=(const lab::Tree<T>& other) noexcept {
+    if (this == &other) {
+        return *this;
+    }
+    auto iterator = other.begin();
+
+    while (iterator.hasNext()) {
+        iterator.next();
+        this->insert(**iterator);
+    }
+
+    return *this;
+}
+
+template<typename T>
+lab::Tree<T>::Tree(const lab::Tree<T>& other) {
+    auto iterator = other.begin();
+
+    while (iterator.hasNext()) {
+        iterator.next();
+        this->insert(**iterator);
+    }
 }
 
 template<typename T> void lab::Tree<T>::insert(T obj) {
@@ -102,7 +130,7 @@ template<typename T> void lab::Tree<T>::destroy_tree(lab::Node<T>*& leaf) {
 }
 
 template<typename T> void lab::Tree<T>::insert(T obj, lab::Node<T>* leaf) {
-    if (obj < leaf->value) {
+    if (obj < *(leaf->value)) {
         if (leaf->left != nullptr) {
             insert(obj, leaf->left);
         }
@@ -122,11 +150,11 @@ template<typename T> void lab::Tree<T>::insert(T obj, lab::Node<T>* leaf) {
     }
 }
 
-template<> lab::Node<lab::ATM*>* lab::Tree<lab::ATM*>::search(const common::string& id, Node<lab::ATM*>* leaf) {
+template<> lab::Node<lab::ATM>* lab::Tree<lab::ATM>::search(const common::string& id, Node<lab::ATM>* leaf) {
     if (leaf != nullptr) {
-        if (id == *(leaf->value)->id())
+        if (id == leaf->value->id())
             return leaf;
-        if (id < *(leaf->value)->id())
+        if (id < leaf->value->id())
             return search(id, leaf->left);
         else
             return search(id, leaf->right);
@@ -147,6 +175,11 @@ template<typename T> lab::Node<T>* lab::Tree<T>::search(const T& value, Node<T>*
 }
 
 template<typename T> lab::TreeIterator<T> lab::Tree<T>::begin() {
+    return lab::TreeIterator<T>(root);
+}
+
+template<typename T>
+lab::TreeIterator<T> lab::Tree<T>::begin() const {
     return lab::TreeIterator<T>(root);
 }
 
@@ -193,14 +226,14 @@ lab::Tree<float> lab::Tree<float>::read(std::ifstream& ifstream) {
 }
 
 template<>
-lab::Tree<lab::ATM*> lab::Tree<lab::ATM*>::read(std::ifstream& ifstream) {
-    auto tree = lab::Tree<lab::ATM*>();
+lab::Tree<lab::ATM> lab::Tree<lab::ATM>::read(std::ifstream& ifstream) {
+    auto tree = lab::Tree<lab::ATM>();
 
     while (ifstream.is_open()) {
         auto atm = lab::ATM_io::load_bin(ifstream);
 
-        if (atm != nullptr) {
-            tree.insert(atm);
+        if (atm != nullptr || !ifstream.eof()) {
+            tree.insert(*atm);
         }
         else {
             ifstream.close();
@@ -231,7 +264,7 @@ void lab::Tree<float>::write(std::ofstream& ofstream) {
 }
 
 template<>
-void lab::Tree<lab::ATM*>::write(std::ofstream& ofstream) {
+void lab::Tree<lab::ATM>::write(std::ofstream& ofstream) {
     auto atm_iterator = this->begin();
 
     while (atm_iterator.hasNext()) {

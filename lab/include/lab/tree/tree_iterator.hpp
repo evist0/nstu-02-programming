@@ -13,16 +13,16 @@ namespace lab {
             void fillStack(Node<T>* node);
 
             void next();
-            bool hasNext() const;
+            [[nodiscard]] bool hasNext() const;
 
-            T operator*();
+            T* operator*();
         private:
-            T value;
+            T* value;
     };
 }
 
 template<typename T> lab::TreeIterator<T>::TreeIterator(lab::Node<T>* root)
-        :value(nullptr), st() {
+        :value(), st() {
     fillStack(root);
 }
 
@@ -46,15 +46,13 @@ template<typename T> void lab::TreeIterator<T>::next() {
 
         return;
     }
-
-    value = nullptr;
 }
 
 template<typename T> bool lab::TreeIterator<T>::hasNext() const {
     return !st.is_empty();
 }
 
-template<typename T> T lab::TreeIterator<T>::operator*() {
+template<typename T> T* lab::TreeIterator<T>::operator*() {
     return value;
 }
 

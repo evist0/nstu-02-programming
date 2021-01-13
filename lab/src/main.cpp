@@ -9,7 +9,7 @@ auto int_tree = lab::Tree<int>();
 
 auto float_tree = lab::Tree<float>();
 
-auto atm_tree = lab::Tree<lab::ATM*>();
+auto atm_tree = lab::Tree<lab::ATM>();
 
 short selected_tree = 0;
 
@@ -69,7 +69,7 @@ void print() {
 
         while (iterator.hasNext()) {
             iterator.next();
-            std::cout << *iterator << std::endl;
+            std::cout << **iterator << std::endl;
         }
     }
     else if (selected_tree == 1) {
@@ -82,7 +82,7 @@ void print() {
 
         while (iterator.hasNext()) {
             iterator.next();
-            std::cout << *iterator << std::endl;
+            std::cout << **iterator << std::endl;
         }
     }
     else if (selected_tree == 2) {
@@ -109,7 +109,7 @@ void copy_atm() {
     std::cout << "Введите ID банкомата, который будет скопирован:" << std::endl;
     std::cin >> id;
 
-    lab::ATM** atmToCopy = atm_tree.search(id);
+    lab::ATM* atmToCopy = atm_tree.search(id);
 
     atm_tree.insert(*atmToCopy);
 }
@@ -136,17 +136,17 @@ void create_atm_constructor(lab::ATM_type type) {
 
             if (type == lab::ATM_type::Base) {
                 auto atm = new lab::ATM();
-                atm_tree.insert(atm);
+                atm_tree.insert(*atm);
             }
 
             else if (type == lab::ATM_type::Fields) {
                 auto atm = new lab::ATM_fields();
-                atm_tree.insert(atm);
+                atm_tree.insert(*atm);
             }
 
             else if (type == lab::ATM_type::Reports) {
                 auto atm = new lab::ATM_reports();
-                atm_tree.insert(atm);
+                atm_tree.insert(*atm);
             }
         }
 
@@ -164,7 +164,7 @@ void create_atm_constructor(lab::ATM_type type) {
                 std::cin >> balance;
 
                 auto atm = new lab::ATM(id, max_widthdraw, balance);
-                atm_tree.insert(atm);
+                atm_tree.insert(*atm);
             }
 
             else if (type == lab::ATM_type::Fields) {
@@ -184,7 +184,7 @@ void create_atm_constructor(lab::ATM_type type) {
                 std::cin >> balance;
 
                 auto atm = new lab::ATM_fields(id, bankname, location, max_widthdraw, balance);
-                atm_tree.insert(atm);
+                atm_tree.insert(*atm);
             }
 
             else if (type == lab::ATM_type::Reports) {
@@ -198,7 +198,7 @@ void create_atm_constructor(lab::ATM_type type) {
                 std::cin >> balance;
 
                 auto atm = new lab::ATM_reports(id, max_widthdraw, balance);
-                atm_tree.insert(atm);
+                atm_tree.insert(*atm);
             }
         }
 
@@ -329,7 +329,7 @@ void load_tree() {
     }
     else if (selected_tree == 2) {
         std::ifstream in("ATMs.bin", std::ios::out | std::ios::binary);
-        atm_tree = lab::Tree<lab::ATM*>::read(in);
+        atm_tree = lab::Tree<lab::ATM>::read(in);
     }
 }
 

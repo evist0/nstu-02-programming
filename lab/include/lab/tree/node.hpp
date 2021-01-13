@@ -9,11 +9,12 @@ namespace lab {
             Node(T value);
             ~Node();
         private:
-            T value;
+            T* value;
             Node<T>* left;
             Node<T>* right;
 
             template<typename U> friend class Tree;
+
             template<typename Z> friend class TreeIterator;
     };
 }
